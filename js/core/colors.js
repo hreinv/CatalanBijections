@@ -4,8 +4,6 @@
  * CORRESPONDENCE_COLORS: 8 high-contrast colors for mapping elements
  * between Catalan structures. Chosen for visibility on classroom projectors
  * against white backgrounds.
- *
- * THEME_COLORS: UI chrome colors for backgrounds, strokes, and grid lines.
  */
 
 /** 8 distinct high-contrast colors for element correspondence */
@@ -19,12 +17,3 @@ export const CORRESPONDENCE_COLORS = [
   '#795548', // brown
   '#607D8B', // blue-grey
 ];
-
-/** Theme colors for UI elements */
-export const THEME_COLORS = {
-  background: '#FFFFFF',
-  stroke:     '#1A1A1A',
-  gridLine:   '#E0E0E0',
-  highlight:  '#FFC107',
-  text:       '#212121',
-};

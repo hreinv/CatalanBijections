@@ -20,15 +20,3 @@ export function easeInOutCubic(t) {
     ? 4 * clamped * clamped * clamped
     : 1 - Math.pow(-2 * clamped + 2, 3) / 2;
 }
-
-/**
- * Linear interpolation between two values.
- *
- * @param {number} a - Start value
- * @param {number} b - End value
- * @param {number} t - Interpolation factor (0 = a, 1 = b)
- * @returns {number} Interpolated value
- */
-export function lerp(a, b, t) {
-  return a + (b - a) * t;
-}
