@@ -32,8 +32,8 @@ Requirements for the presentation-ready release. Each maps to roadmap phases.
 ### Classical Bijections
 
 - [x] **BIJC-01**: Parentheses to Dyck Paths bijection with step-by-step animation ('(' = up, ')' = down)
-- [ ] **BIJC-02**: Binary Trees to Triangulations bijection with step-by-step animation (triangles correspond to internal nodes)
-- [ ] **BIJC-03**: Parentheses to Binary Trees bijection with step-by-step animation (recursive nesting defines subtrees)
+- [x] **BIJC-02**: Binary Trees to Triangulations bijection with step-by-step animation (triangles correspond to internal nodes)
+- [x] **BIJC-03**: Parentheses to Binary Trees bijection with step-by-step animation (recursive nesting defines subtrees)
 - [ ] **BIJC-04**: Dyck Paths to Lattice Paths bijection with step-by-step animation (45 degree geometric rotation)
 - [ ] **BIJC-05**: Binary Trees to Rooted Plane Trees bijection with step-by-step animation (left-child/right-sibling rotation)
 - [ ] **BIJC-06**: Dyck Paths to Mountain Ranges bijection with step-by-step animation (visual reinterpretation)
@@ -111,8 +111,8 @@ Deferred to future release. Tracked but not in current roadmap.
 | STRC-11 | Phase 4 | Pending |
 | STRC-12 | Phase 2 | Complete |
 | BIJC-01 | Phase 3 | Complete |
-| BIJC-02 | Phase 3 | Pending |
-| BIJC-03 | Phase 3 | Pending |
+| BIJC-02 | Phase 3 | Complete |
+| BIJC-03 | Phase 3 | Complete |
 | BIJC-04 | Phase 5 | Pending |
 | BIJC-05 | Phase 5 | Pending |
 | BIJC-06 | Phase 5 | Pending |

@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-23)
 
 **Core value:** Presenter can pick any two Catalan structures and walk the class through an animated, step-by-step visual bijection transformation.
-**Current focus:** Phase 3 - First Bijections
+**Current focus:** Phase 3 - First Bijections (Complete)
 
 ## Current Position
 
 Phase: 3 of 7 (First Bijections)
-Plan: 2 of 3 in current phase
-Status: Executing
-Last activity: 2026-02-24 -- Completed 03-02 Parens-Dyck Bijection
+Plan: 3 of 3 in current phase
+Status: Phase Complete
+Last activity: 2026-02-24 -- Completed 03-03 Remaining Bijections
 
-Progress: [██████░░░░] 57%
+Progress: [██████░░░░] 64%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
+- Total plans completed: 8
 - Average duration: 2.1min
-- Total execution time: 0.25 hours
+- Total execution time: 0.28 hours
 
 **By Phase:**
 
@@ -34,9 +34,10 @@ Progress: [██████░░░░] 57%
 | Phase 02 P03 | 2min | 2 tasks | 2 files |
 | Phase 03 P01 | 2min | 2 tasks | 5 files |
 | Phase 03 P02 | 2min | 2 tasks | 2 files |
+| Phase 03 P03 | 3min | 2 tasks | 3 files |
 
 **Recent Trend:**
-- Last 5 plans: 4min, 2min, 2min, 2min, 2min
+- Last 5 plans: 2min, 2min, 2min, 2min, 3min
 - Trend: stable
 
 *Updated after each plan completion*
@@ -72,6 +73,9 @@ Recent decisions affecting current work:
 - [Phase 03]: 03-02: drawFrame draws elements directly rather than delegating to structure module draw() functions
 - [Phase 03]: 03-02: Pulse frequency at 0.008*PI (~2Hz) for smooth but noticeable glow oscillation
 - [Phase 03]: 03-02: Reversed steps reverse array order and swap source/target box assignments
+- [Phase 03]: 03-03: Tree layout computed locally in bijection modules to avoid modifying structure modules
+- [Phase 03]: 03-03: Pre-order traversal order for binary-triang ensures node indices match triangle reveal order
+- [Phase 03]: 03-03: Subtree range indicator bars in parens-binary show left/right content decomposition visually
 
 ### Pending Todos
 
@@ -85,5 +89,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 03-02-PLAN.md (Parens-Dyck Bijection)
+Stopped at: Completed 03-03-PLAN.md (Remaining Bijections) -- Phase 3 Complete
 Resume file: None
