@@ -2,12 +2,14 @@
  * Bijection Router
  *
  * Maps structure pair keys to bijection modules that produce
- * animation step sequences. Starts empty -- bijection modules
- * are registered via register() in Plans 02 and 03.
+ * animation step sequences. Bijection modules are imported and
+ * registered at module load time.
  *
  * Lookup is bidirectional: registering a module for source|target
  * also registers it for target|source with a reversed flag.
  */
+
+import * as parensDyck from './parens-dyck.js';
 
 /** @type {Object.<string, { module: Object, reversed: boolean }>} */
 const registry = {};
@@ -33,6 +35,9 @@ export function register(mod) {
   registry[forwardKey] = { module: mod, reversed: false };
   registry[reverseKey] = { module: mod, reversed: true };
 }
+
+// --- Register bijection modules ---
+register(parensDyck);
 
 /**
  * Look up and generate animation steps for a structure pair.
