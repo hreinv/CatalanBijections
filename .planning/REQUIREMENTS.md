@@ -44,7 +44,7 @@ Requirements for the presentation-ready release. Each maps to roadmap phases.
 
 - [x] **BRDG-01**: Dyck word bridge composes bijections for non-classical structure pairs
 - [x] **BRDG-02**: Pathfinding selects shortest route through bijection graph for any two structures
-- [ ] **BRDG-03**: Bijection chain indicator shows intermediate structures when composing through bridge
+- [x] **BRDG-03**: Bijection chain indicator shows intermediate structures when composing through bridge
 
 ### Animation Engine
 
@@ -120,7 +120,7 @@ Deferred to future release. Tracked but not in current roadmap.
 | BIJC-08 | Phase 5 | Complete |
 | BRDG-01 | Phase 6 | Complete |
 | BRDG-02 | Phase 6 | Complete |
-| BRDG-03 | Phase 6 | Pending |
+| BRDG-03 | Phase 6 | Complete |
 | ANIM-01 | Phase 2 | Complete |
 | ANIM-02 | Phase 2 | Complete |
 | ANIM-03 | Phase 2 | Complete |
