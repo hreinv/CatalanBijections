@@ -52,6 +52,8 @@
       const mountainRangeMod = await import('/js/structures/mountain-range.js');
       const latticePathMod = await import('/js/structures/lattice-path.js');
       const ballotSequenceMod = await import('/js/structures/ballot-sequence.js');
+      const staircasePolygonMod = await import('/js/structures/staircase-polygon.js');
+      const rootedPlaneTreeMod = await import('/js/structures/rooted-plane-tree.js');
       const { structures } = await import('/js/structures/registry.js');
 
       const structureModules = [
@@ -62,6 +64,8 @@
         { key: 'mountain-range', name: 'Mountain Ranges', mod: mountainRangeMod },
         { key: 'lattice-path', name: 'Lattice Paths', mod: latticePathMod },
         { key: 'ballot-sequence', name: 'Ballot Sequences', mod: ballotSequenceMod },
+        { key: 'staircase-polygon', name: 'Staircase Polygons', mod: staircasePolygonMod },
+        { key: 'rooted-plane-tree', name: 'Rooted Plane Trees', mod: rootedPlaneTreeMod },
       ];
 
       // --- Test 1: Module interface verification ---
@@ -100,16 +104,16 @@
         }
       }
 
-      // Expected: 7 structures x (1+2+5+14) = 7 x 22 = 154 round-trips
-      log(`Total round-trips: ${totalRoundTrips}/154`, totalRoundTrips === 154);
+      // Expected: 9 structures x (1+2+5+14) = 9 x 22 = 198 round-trips
+      log(`Total round-trips: ${totalRoundTrips}/198`, totalRoundTrips === 198);
 
       // --- Test 3: Registry verification ---
       log('--- Registry Checks ---', true);
 
       log('Registry is an object', typeof structures === 'object' && structures !== null);
-      log('Registry has 7 entries', Object.keys(structures).length === 7);
+      log('Registry has 9 entries', Object.keys(structures).length === 9);
 
-      const expectedKeys = ['parentheses', 'dyck-path', 'binary-tree', 'triangulation', 'mountain-range', 'lattice-path', 'ballot-sequence'];
+      const expectedKeys = ['parentheses', 'dyck-path', 'binary-tree', 'triangulation', 'mountain-range', 'lattice-path', 'ballot-sequence', 'staircase-polygon', 'rooted-plane-tree'];
       for (const key of expectedKeys) {
         const entry = structures[key];
         log(`Registry has key '${key}'`, entry !== undefined);

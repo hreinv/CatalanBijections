@@ -12,6 +12,8 @@ import * as triangulation from './triangulation.js';
 import * as mountainRange from './mountain-range.js';
 import * as latticePath from './lattice-path.js';
 import * as ballotSequence from './ballot-sequence.js';
+import * as staircasePolygon from './staircase-polygon.js';
+import * as rootedPlaneTree from './rooted-plane-tree.js';
 
 /**
  * Registry of all Catalan structure modules.
@@ -27,5 +29,7 @@ export const structures = Object.freeze({
   'triangulation':  { module: triangulation,  label: 'Triangulations' },
   'mountain-range':   { module: mountainRange,   label: 'Mountain Ranges' },
   'lattice-path':     { module: latticePath,     label: 'Lattice Paths' },
-  'ballot-sequence':  { module: ballotSequence,  label: 'Ballot Sequences' },
+  'ballot-sequence':    { module: ballotSequence,    label: 'Ballot Sequences' },
+  'staircase-polygon':  { module: staircasePolygon,  label: 'Staircase Polygons' },
+  'rooted-plane-tree':  { module: rootedPlaneTree,   label: 'Rooted Plane Trees' },
 });
