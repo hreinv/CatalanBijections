@@ -9,6 +9,7 @@ import { setupCanvas, clearCanvas } from './core/canvas-utils.js';
 import { enumerate } from './core/dyck.js';
 import { CORRESPONDENCE_COLORS } from './core/colors.js';
 import { structures } from './structures/registry.js';
+import { createAnimationEngine } from './engine/animation.js';
 
 // --- Application State ---
 
@@ -161,17 +162,20 @@ function render() {
 
 function onSourceChange() {
   state.sourceKey = dom.sourceSelect.value;
+  resetAnimation();
   render();
 }
 
 function onTargetChange() {
   state.targetKey = dom.targetSelect.value;
+  resetAnimation();
   render();
 }
 
 function onNChange() {
   state.n = parseInt(dom.nSelect.value, 10);
   state.instanceIndex = 0;
+  resetAnimation();
   updateDerivedState();
   render();
 }
@@ -181,6 +185,7 @@ function onPrev() {
   state.instanceIndex = state.instanceIndex === 0
     ? state.dyckWords.length - 1
     : state.instanceIndex - 1;
+  resetAnimation();
   updateDerivedState();
   render();
 }
@@ -190,11 +195,35 @@ function onNext() {
   state.instanceIndex = state.instanceIndex === state.dyckWords.length - 1
     ? 0
     : state.instanceIndex + 1;
+  resetAnimation();
   updateDerivedState();
   render();
 }
 
-// Playback controls wired in Plan 02-03
+// --- Animation Engine (initialized in DOMContentLoaded) ---
+
+let engine = null;
+
+/**
+ * Update the play/pause button text and title to reflect current state.
+ */
+function updatePlayPauseButton() {
+  if (!dom.btnPlayPause) return;
+  const playing = state.animation.playing;
+  dom.btnPlayPause.textContent = playing ? 'Pause' : 'Play';
+  dom.btnPlayPause.title = playing ? 'Pause animation' : 'Play animation';
+}
+
+/**
+ * Reset animation state and pause. Called when structures or n change
+ * to prevent orphan animation loops (Pitfall 4 from research).
+ */
+function resetAnimation() {
+  if (engine) engine.pause();
+  state.animation.steps = [];
+  state.animation.currentStep = 0;
+  state.animation.progress = 0.0;
+}
 
 // --- Initialization ---
 
@@ -207,6 +236,13 @@ document.addEventListener('DOMContentLoaded', () => {
   dom.btnPrev = document.getElementById('btn-prev');
   dom.btnNext = document.getElementById('btn-next');
   dom.instanceIndicator = document.getElementById('instance-indicator');
+  dom.btnPlayPause = document.getElementById('btn-play-pause');
+  dom.btnStepFwd = document.getElementById('btn-step-fwd');
+  dom.btnStepBack = document.getElementById('btn-step-back');
+  dom.btnStart = document.getElementById('btn-start');
+  dom.btnEnd = document.getElementById('btn-end');
+  dom.speedSlider = document.getElementById('speed-slider');
+  dom.speedDisplay = document.getElementById('speed-display');
 
   // Setup canvas
   ({ ctx, width: canvasWidth, height: canvasHeight } = setupCanvas(canvas));
@@ -231,6 +267,35 @@ document.addEventListener('DOMContentLoaded', () => {
   dom.nSelect.addEventListener('change', onNChange);
   dom.btnPrev.addEventListener('click', onPrev);
   dom.btnNext.addEventListener('click', onNext);
+
+  // Initialize animation engine
+  engine = createAnimationEngine({
+    onRender: () => render(),
+    getState: () => state.animation,
+    setState: (changes) => {
+      Object.assign(state.animation, changes);
+      updatePlayPauseButton();
+    },
+  });
+
+  // Wire playback controls
+  dom.btnPlayPause.addEventListener('click', () => engine.togglePlay());
+  dom.btnStepFwd.addEventListener('click', () => engine.stepForward());
+  dom.btnStepBack.addEventListener('click', () => engine.stepBackward());
+  dom.btnStart.addEventListener('click', () => engine.jumpToStart());
+  dom.btnEnd.addEventListener('click', () => engine.jumpToEnd());
+
+  // Wire speed slider
+  dom.speedSlider.addEventListener('input', () => {
+    const value = parseFloat(dom.speedSlider.value);
+    engine.setSpeed(value);
+    dom.speedDisplay.textContent = `${value.toFixed(1)}x`;
+  });
+
+  // Enable playback controls (remove disabled class set in Plan 02-02)
+  document.querySelectorAll('#controls .control-group.disabled').forEach((el) => {
+    el.classList.remove('disabled');
+  });
 
   // Resize handler with 200ms debounce
   let resizeTimer = null;
