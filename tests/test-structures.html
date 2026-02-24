@@ -54,6 +54,8 @@
       const ballotSequenceMod = await import('/js/structures/ballot-sequence.js');
       const staircasePolygonMod = await import('/js/structures/staircase-polygon.js');
       const rootedPlaneTreeMod = await import('/js/structures/rooted-plane-tree.js');
+      const nonCrossingPartitionMod = await import('/js/structures/non-crossing-partition.js');
+      const stackSortablePermMod = await import('/js/structures/stack-sortable-perm.js');
       const { structures } = await import('/js/structures/registry.js');
 
       const structureModules = [
@@ -66,6 +68,8 @@
         { key: 'ballot-sequence', name: 'Ballot Sequences', mod: ballotSequenceMod },
         { key: 'staircase-polygon', name: 'Staircase Polygons', mod: staircasePolygonMod },
         { key: 'rooted-plane-tree', name: 'Rooted Plane Trees', mod: rootedPlaneTreeMod },
+        { key: 'non-crossing-partition', name: 'Non-crossing Partitions', mod: nonCrossingPartitionMod },
+        { key: 'stack-sortable-perm', name: 'Stack-sortable Permutations', mod: stackSortablePermMod },
       ];
 
       // --- Test 1: Module interface verification ---
@@ -104,16 +108,16 @@
         }
       }
 
-      // Expected: 9 structures x (1+2+5+14) = 9 x 22 = 198 round-trips
-      log(`Total round-trips: ${totalRoundTrips}/198`, totalRoundTrips === 198);
+      // Expected: 11 structures x (1+2+5+14) = 11 x 22 = 242 round-trips
+      log(`Total round-trips: ${totalRoundTrips}/242`, totalRoundTrips === 242);
 
       // --- Test 3: Registry verification ---
       log('--- Registry Checks ---', true);
 
       log('Registry is an object', typeof structures === 'object' && structures !== null);
-      log('Registry has 9 entries', Object.keys(structures).length === 9);
+      log('Registry has 11 entries', Object.keys(structures).length === 11);
 
-      const expectedKeys = ['parentheses', 'dyck-path', 'binary-tree', 'triangulation', 'mountain-range', 'lattice-path', 'ballot-sequence', 'staircase-polygon', 'rooted-plane-tree'];
+      const expectedKeys = ['parentheses', 'dyck-path', 'binary-tree', 'triangulation', 'mountain-range', 'lattice-path', 'ballot-sequence', 'staircase-polygon', 'rooted-plane-tree', 'non-crossing-partition', 'stack-sortable-perm'];
       for (const key of expectedKeys) {
         const entry = structures[key];
         log(`Registry has key '${key}'`, entry !== undefined);
