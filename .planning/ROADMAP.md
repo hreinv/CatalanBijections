@@ -64,12 +64,12 @@ Plans:
   3. Parentheses-to-Binary-Trees bijection animates showing how nesting structure maps to subtree structure
   4. Matching elements across source and target structures share the same color, making the correspondence visually obvious
   5. The currently active transformation step pulses or glows while non-active elements are dimmed
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
-- [ ] 03-03: TBD
+- [ ] 03-01-PLAN.md — Easing utility, bijection router skeleton, step description panel, and dual-mode render
+- [ ] 03-02-PLAN.md — Parentheses-to-Dyck-Paths bijection with color correspondence and glow/dim highlighting
+- [ ] 03-03-PLAN.md — Binary-Trees-to-Triangulations and Parentheses-to-Binary-Trees bijections
 
 ### Phase 4: Remaining Structures
 **Goal**: All 11 Catalan structures render correctly and convert to/from Dyck words, completing the full structure catalog
