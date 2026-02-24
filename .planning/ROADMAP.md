@@ -19,6 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 5: Remaining Bijections** - Five additional classical bijections completing all 8 hand-crafted animations
 - [ ] **Phase 6: Dyck Bridge** - Automatic bijection composition for all 55 structure pairs via Dyck word pathfinding
 - [ ] **Phase 7: Presentation Hardening** - Keyboard shortcuts, edge case handling, and projector verification
+- [ ] **Phase 8: Verify Completed Work & Fix Integration Debt** - VERIFICATION.md for Phases 2-3, dead import fix, orphaned export cleanup (Gap Closure)
 
 ## Phase Details
 
@@ -130,18 +131,36 @@ Plans:
 Plans:
 - [ ] 07-01: TBD
 
+### Phase 8: Verify Completed Work & Fix Integration Debt
+**Goal**: Formally verify all Phase 2 and Phase 3 requirements against success criteria, fix integration issues, and clean up tech debt so the audit passes for completed work
+**Depends on**: Phase 3
+**Requirements**: (verifies STRC-01, STRC-02, STRC-06, STRC-10, STRC-12, ANIM-01-06, UICT-01-07, BIJC-01-03)
+**Gap Closure**: Closes 21 partial requirements, 3 integration issues, 4 tech debt items from v1.0 audit
+**Success Criteria** (what must be TRUE):
+  1. VERIFICATION.md exists for Phase 2 confirming all 14 requirements pass their success criteria
+  2. VERIFICATION.md exists for Phase 3 confirming all 7 requirements pass their success criteria
+  3. Dead import in binary-triang.js is removed
+  4. Orphaned exports (THEME_COLORS, validate(), lerp()) are removed or wired to consumers
+  5. All 21 previously-partial requirements are now fully satisfied (3-source cross-reference passes)
+**Plans**: TBD
+
+Plans:
+- [ ] 08-01: TBD
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 Note: Phase 3 and Phase 4 depend only on Phase 2, so they could execute in either order. Phase 5 depends on both Phase 3 and Phase 4.
+Phase 8 (gap closure) depends only on Phase 3 and can run any time after Phase 3.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Core Foundation | 2/2 | Complete | 2026-02-24 |
 | 2. Vertical Slice | 3/3 | Complete | 2026-02-24 |
-| 3. First Bijections | 0/3 | Not started | - |
+| 3. First Bijections | 3/3 | Complete | 2026-02-23 |
 | 4. Remaining Structures | 0/3 | Not started | - |
 | 5. Remaining Bijections | 0/3 | Not started | - |
 | 6. Dyck Bridge | 0/2 | Not started | - |
 | 7. Presentation Hardening | 0/1 | Not started | - |
+| 8. Verify & Fix Integration Debt | 0/1 | Not started | - |
