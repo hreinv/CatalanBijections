@@ -32,6 +32,10 @@ const state = {
   },
 };
 
+// --- Keyboard Speed Presets ---
+
+const SPEED_PRESETS = { '1': 0.5, '2': 1.0, '3': 1.5, '4': 2.0, '5': 3.0 };
+
 // --- Rendering Context (module-scoped, not app state) ---
 
 let ctx = null;
@@ -277,6 +281,58 @@ function onNext() {
   render();
 }
 
+// --- Keyboard Handler ---
+
+/**
+ * Handle keyboard shortcuts for animation control.
+ * Ignores events when focus is on form elements (SELECT, INPUT, TEXTAREA).
+ *
+ * Keys:
+ *   Space       - Toggle play/pause
+ *   ArrowRight  - Step forward
+ *   ArrowLeft   - Step backward
+ *   Home        - Jump to start
+ *   End         - Jump to end
+ *   1-5         - Set speed (0.5x, 1.0x, 1.5x, 2.0x, 3.0x)
+ */
+function onKeyDown(e) {
+  // Guard: don't capture keys when user is interacting with form controls
+  const tag = e.target.tagName;
+  if (tag === 'SELECT' || tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+  switch (e.key) {
+    case ' ':
+      e.preventDefault();
+      engine.togglePlay();
+      updatePlayPauseButton();
+      break;
+    case 'ArrowRight':
+      e.preventDefault();
+      engine.stepForward();
+      break;
+    case 'ArrowLeft':
+      e.preventDefault();
+      engine.stepBackward();
+      break;
+    case 'Home':
+      e.preventDefault();
+      engine.jumpToStart();
+      break;
+    case 'End':
+      e.preventDefault();
+      engine.jumpToEnd();
+      break;
+    default:
+      if (SPEED_PRESETS[e.key] !== undefined) {
+        const speed = SPEED_PRESETS[e.key];
+        engine.setSpeed(speed);
+        dom.speedSlider.value = speed;
+        dom.speedDisplay.textContent = `${speed.toFixed(1)}x`;
+      }
+      return; // Don't prevent default for unhandled keys
+  }
+}
+
 // --- Animation Engine (initialized in DOMContentLoaded) ---
 
 let engine = null;
@@ -389,5 +445,16 @@ document.addEventListener('DOMContentLoaded', () => {
       render();
       console.log(`Canvas resized: ${canvasWidth}x${canvasHeight}`);
     }, 200);
+  });
+
+  // Keyboard shortcuts for presentation control
+  document.addEventListener('keydown', onKeyDown);
+
+  // Tab-switch resilience: pause animation when page becomes hidden
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && engine && engine.isPlaying()) {
+      engine.pause();
+      updatePlayPauseButton();
+    }
   });
 });
