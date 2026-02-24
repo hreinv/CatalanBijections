@@ -1,0 +1,146 @@
+# Requirements: Catalan Number Bijection Explorer
+
+**Defined:** 2026-02-23
+**Core Value:** Presenter can pick any two Catalan structures and walk the class through an animated, step-by-step visual transformation showing exactly how the bijection maps elements between them.
+
+## v1 Requirements
+
+Requirements for the presentation-ready release. Each maps to roadmap phases.
+
+### Foundation
+
+- [ ] **FOUND-01**: App loads from index.html with zero dependencies (no npm, no build step)
+- [ ] **FOUND-02**: Dyck word enumeration correctly generates all C(n) instances for n=1 to 4
+- [ ] **FOUND-03**: HiDPI canvas rendering with devicePixelRatio scaling for sharp projector display
+- [ ] **FOUND-04**: Clean minimal visual theme (white background, high-contrast colors, thick strokes)
+
+### Structure Rendering
+
+- [ ] **STRC-01**: Balanced parentheses rendered as formatted character sequences
+- [ ] **STRC-02**: Dyck paths rendered as lattice paths with up/down steps on a grid
+- [ ] **STRC-03**: Mountain ranges rendered as mountain-profile curves
+- [ ] **STRC-04**: Lattice paths below diagonal rendered on an n x n grid
+- [ ] **STRC-05**: Staircase polygons rendered as staircase-bounded shapes
+- [ ] **STRC-06**: Binary trees rendered with recursive node-edge layout
+- [ ] **STRC-07**: Rooted plane trees rendered with ordered children layout
+- [ ] **STRC-08**: Ballot sequences rendered as labeled vote sequences
+- [ ] **STRC-09**: Non-crossing partitions rendered on a circle with arcs
+- [ ] **STRC-10**: Triangulations rendered as convex polygons with diagonals
+- [ ] **STRC-11**: Stack-sortable permutations rendered with stack visualization
+- [ ] **STRC-12**: Each structure correctly converts to/from Dyck word representation (round-trip identity verified for all C(4)=14 instances)
+
+### Classical Bijections
+
+- [ ] **BIJC-01**: Parentheses to Dyck Paths bijection with step-by-step animation ('(' = up, ')' = down)
+- [ ] **BIJC-02**: Binary Trees to Triangulations bijection with step-by-step animation (triangles correspond to internal nodes)
+- [ ] **BIJC-03**: Parentheses to Binary Trees bijection with step-by-step animation (recursive nesting defines subtrees)
+- [ ] **BIJC-04**: Dyck Paths to Lattice Paths bijection with step-by-step animation (45 degree geometric rotation)
+- [ ] **BIJC-05**: Binary Trees to Rooted Plane Trees bijection with step-by-step animation (left-child/right-sibling rotation)
+- [ ] **BIJC-06**: Dyck Paths to Mountain Ranges bijection with step-by-step animation (visual reinterpretation)
+- [ ] **BIJC-07**: Non-crossing Partitions to Triangulations bijection with step-by-step animation (partition blocks to triangle fans)
+- [ ] **BIJC-08**: Ballot Sequences to Dyck Paths bijection with step-by-step animation (A-ahead = path above axis)
+
+### Bridge System
+
+- [ ] **BRDG-01**: Dyck word bridge composes bijections for non-classical structure pairs
+- [ ] **BRDG-02**: Pathfinding selects shortest route through bijection graph for any two structures
+- [ ] **BRDG-03**: Bijection chain indicator shows intermediate structures when composing through bridge
+
+### Animation Engine
+
+- [ ] **ANIM-01**: Timestamp-based animation loop using requestAnimationFrame
+- [ ] **ANIM-02**: Play/pause toggle for bijection animations
+- [ ] **ANIM-03**: Step forward and step backward controls for manual progression
+- [ ] **ANIM-04**: Jump to start and jump to end controls
+- [ ] **ANIM-05**: Speed slider adjustable from 0.5x to 3x
+- [ ] **ANIM-06**: Smooth easing transitions between animation steps
+
+### UI Controls
+
+- [ ] **UICT-01**: Structure A and Structure B dropdown selectors for choosing any two structures
+- [ ] **UICT-02**: n selector (1-4) to set the Catalan number index
+- [ ] **UICT-03**: Instance navigator with previous/next buttons and "X of Y" indicator
+- [ ] **UICT-04**: Step description text panel showing current bijection step explanation
+- [ ] **UICT-05**: Side-by-side dual-panel layout with source structure left, target structure right
+- [ ] **UICT-06**: Color-coded element correspondence (matching elements share colors across both panels)
+- [ ] **UICT-07**: Active transformation step highlighting (current step pulses/glows, others dim)
+- [ ] **UICT-08**: Keyboard shortcuts (spacebar play/pause, arrow keys step, number keys speed)
+
+## v2 Requirements
+
+Deferred to future release. Tracked but not in current roadmap.
+
+### Enhanced Visualization
+
+- **ENHV-01**: All-instances gallery view showing all C(n) instances in a grid
+- **ENHV-02**: URL hash state for bookmarking specific demos
+- **ENHV-03**: Presenter notes / cheat sheet panel with bijection definitions
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| User-editable structures | Massive input validation complexity, not needed for a presentation demo |
+| n > 4 support | C(5)=42 instances too dense for projector display, kills pacing |
+| Mobile/touch support | Presentation runs on one laptop connected to projector |
+| 3D visualizations | All 11 structures have clean 2D representations, WebGL adds dependency |
+| LaTeX rendering | Breaks zero-dependency constraint, formal notation lives in Google Slides |
+| Sound effects | Distracting in classroom, browser autoplay policies unreliable |
+| Tutorial/onboarding | Only user is the presenter who built it |
+| Save/load state | One-shot presentation tool, no persistence needed |
+| Quiz/assessment mode | This is a demonstration, not an interactive exercise |
+
+## Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| FOUND-01 | Phase 1 | Pending |
+| FOUND-02 | Phase 1 | Pending |
+| FOUND-03 | Phase 1 | Pending |
+| FOUND-04 | Phase 1 | Pending |
+| STRC-01 | Phase 2 | Pending |
+| STRC-02 | Phase 2 | Pending |
+| STRC-03 | Phase 4 | Pending |
+| STRC-04 | Phase 4 | Pending |
+| STRC-05 | Phase 4 | Pending |
+| STRC-06 | Phase 2 | Pending |
+| STRC-07 | Phase 4 | Pending |
+| STRC-08 | Phase 4 | Pending |
+| STRC-09 | Phase 4 | Pending |
+| STRC-10 | Phase 2 | Pending |
+| STRC-11 | Phase 4 | Pending |
+| STRC-12 | Phase 2 | Pending |
+| BIJC-01 | Phase 3 | Pending |
+| BIJC-02 | Phase 3 | Pending |
+| BIJC-03 | Phase 3 | Pending |
+| BIJC-04 | Phase 5 | Pending |
+| BIJC-05 | Phase 5 | Pending |
+| BIJC-06 | Phase 5 | Pending |
+| BIJC-07 | Phase 5 | Pending |
+| BIJC-08 | Phase 5 | Pending |
+| BRDG-01 | Phase 6 | Pending |
+| BRDG-02 | Phase 6 | Pending |
+| BRDG-03 | Phase 6 | Pending |
+| ANIM-01 | Phase 2 | Pending |
+| ANIM-02 | Phase 2 | Pending |
+| ANIM-03 | Phase 2 | Pending |
+| ANIM-04 | Phase 2 | Pending |
+| ANIM-05 | Phase 2 | Pending |
+| ANIM-06 | Phase 3 | Pending |
+| UICT-01 | Phase 2 | Pending |
+| UICT-02 | Phase 2 | Pending |
+| UICT-03 | Phase 2 | Pending |
+| UICT-04 | Phase 3 | Pending |
+| UICT-05 | Phase 2 | Pending |
+| UICT-06 | Phase 3 | Pending |
+| UICT-07 | Phase 3 | Pending |
+| UICT-08 | Phase 7 | Pending |
+
+**Coverage:**
+- v1 requirements: 39 total
+- Mapped to phases: 39
+- Unmapped: 0 ✓
+
+---
+*Requirements defined: 2026-02-23*
+*Last updated: 2026-02-23 after initial definition*
