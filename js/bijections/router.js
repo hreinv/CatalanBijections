@@ -10,6 +10,8 @@
  */
 
 import * as parensDyck from './parens-dyck.js';
+import * as binaryTriang from './binary-triang.js';
+import * as parensBinary from './parens-binary.js';
 
 /** @type {Object.<string, { module: Object, reversed: boolean }>} */
 const registry = {};
@@ -38,6 +40,8 @@ export function register(mod) {
 
 // --- Register bijection modules ---
 register(parensDyck);
+register(binaryTriang);
+register(parensBinary);
 
 /**
  * Look up and generate animation steps for a structure pair.
