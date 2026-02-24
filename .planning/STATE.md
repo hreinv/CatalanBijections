@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-23)
 
 **Core value:** Presenter can pick any two Catalan structures and walk the class through an animated, step-by-step visual bijection transformation.
-**Current focus:** Phase 5 - Remaining Bijections (In Progress)
+**Current focus:** Phase 5 - Remaining Bijections (Complete)
 
 ## Current Position
 
 Phase: 5 of 8 (Remaining Bijections)
-Plan: 2 of 3 in current phase
-Status: In Progress
-Last activity: 2026-02-24 -- Completed 05-02 Dyck-to-Lattice and Binary-to-Plane-Tree Bijections
+Plan: 3 of 3 in current phase (PHASE COMPLETE)
+Status: Phase Complete
+Last activity: 2026-02-24 -- Completed 05-03 NCP-to-Triangulations Bijection (all 8 classical bijections done)
 
-Progress: [████████░░] 75%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
+- Total plans completed: 16
 - Average duration: 2.6min
-- Total execution time: 0.63 hours
+- Total execution time: 0.68 hours
 
 **By Phase:**
 
@@ -42,9 +42,10 @@ Progress: [████████░░] 75%
 | Phase 04 P03 | 4min | 2 tasks | 4 files |
 | Phase 05 P01 | 3min | 2 tasks | 3 files |
 | Phase 05 P02 | 4min | 2 tasks | 3 files |
+| Phase 05 P03 | 3min | 2 tasks | 2 files |
 
 **Recent Trend:**
-- Last 5 plans: 2min, 2min, 4min, 3min, 4min
+- Last 5 plans: 4min, 4min, 3min, 4min, 3min
 - Trend: stable
 
 *Updated after each plan completion*
@@ -99,6 +100,8 @@ Recent decisions affecting current work:
 - [Phase 05]: 05-01: Ballot vote tallies rendered below each vote letter with same three-zone dimming as vote characters
 - [Phase 05]: 05-02: Lattice path grid uses y-inversion toCanvasY matching lattice-path.js draw() convention
 - [Phase 05]: 05-02: Plane tree root drawn at default color with no binary tree counterpart (n+1 plane nodes vs n binary nodes)
+- [Phase 05]: 05-03: NCP elements colored individually by element index (not by block) to match per-triangle correspondence
+- [Phase 05]: 05-03: Block arcs colored by most recently processed element in the block for progressive visual coherence
 
 ### Pending Todos
 
@@ -112,5 +115,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 05-02-PLAN.md (Dyck-to-Lattice and Binary-to-Plane-Tree Bijections) -- Phase 5 plan 2/3 done
+Stopped at: Completed 05-03-PLAN.md (NCP-to-Triangulations Bijection) -- Phase 5 COMPLETE (all 8 classical bijections)
 Resume file: None

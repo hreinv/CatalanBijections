@@ -37,7 +37,7 @@ Requirements for the presentation-ready release. Each maps to roadmap phases.
 - [x] **BIJC-04**: Dyck Paths to Lattice Paths bijection with step-by-step animation (45 degree geometric rotation)
 - [x] **BIJC-05**: Binary Trees to Rooted Plane Trees bijection with step-by-step animation (left-child/right-sibling rotation)
 - [x] **BIJC-06**: Dyck Paths to Mountain Ranges bijection with step-by-step animation (visual reinterpretation)
-- [ ] **BIJC-07**: Non-crossing Partitions to Triangulations bijection with step-by-step animation (partition blocks to triangle fans)
+- [x] **BIJC-07**: Non-crossing Partitions to Triangulations bijection with step-by-step animation (partition blocks to triangle fans)
 - [x] **BIJC-08**: Ballot Sequences to Dyck Paths bijection with step-by-step animation (A-ahead = path above axis)
 
 ### Bridge System
@@ -116,7 +116,7 @@ Deferred to future release. Tracked but not in current roadmap.
 | BIJC-04 | Phase 5 | Complete |
 | BIJC-05 | Phase 5 | Complete |
 | BIJC-06 | Phase 5 | Complete |
-| BIJC-07 | Phase 5 | Pending |
+| BIJC-07 | Phase 5 | Complete |
 | BIJC-08 | Phase 5 | Complete |
 | BRDG-01 | Phase 6 | Pending |
 | BRDG-02 | Phase 6 | Pending |
