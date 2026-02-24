@@ -14,6 +14,8 @@ import * as binaryTriang from './binary-triang.js';
 import * as parensBinary from './parens-binary.js';
 import * as ballotDyck from './ballot-dyck.js';
 import * as dyckMountain from './dyck-mountain.js';
+import * as dyckLattice from './dyck-lattice.js';
+import * as binaryPlaneTree from './binary-plane-tree.js';
 
 /** @type {Object.<string, { module: Object, reversed: boolean }>} */
 const registry = {};
@@ -46,6 +48,8 @@ register(binaryTriang);
 register(parensBinary);
 register(ballotDyck);
 register(dyckMountain);
+register(dyckLattice);
+register(binaryPlaneTree);
 
 /**
  * Look up and generate animation steps for a structure pair.
