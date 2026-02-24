@@ -47,12 +47,12 @@ Plans:
   3. Presenter can select any two structures from dropdowns and see them rendered side-by-side (source left, target right)
   4. Playback controls (play/pause, step forward/back, jump to start/end, speed slider) respond correctly and animation runs smoothly via requestAnimationFrame
   5. Instance navigator cycles through all C(n) instances with previous/next buttons and shows "X of Y" indicator
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
-- [ ] 02-03: TBD
+- [ ] 02-01-PLAN.md — Four structure modules (parentheses, Dyck paths, binary trees, triangulations) with registry and round-trip tests
+- [ ] 02-02-PLAN.md — UI controls, app state management, and side-by-side canvas rendering
+- [ ] 02-03-PLAN.md — Animation engine with rAF loop and playback control wiring
 
 ### Phase 3: First Bijections
 **Goal**: Presenter can animate three classical bijections step-by-step with color-coded element correspondence and textual explanations of each transformation step
