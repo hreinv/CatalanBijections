@@ -12,7 +12,6 @@
  */
 
 import * as binaryTree from '../structures/binary-tree.js';
-import * as triangulation from '../structures/triangulation.js';
 
 /** Router metadata for bidirectional registration */
 export const META = {
