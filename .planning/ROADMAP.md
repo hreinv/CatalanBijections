@@ -142,10 +142,11 @@ Plans:
   3. Dead import in binary-triang.js is removed
   4. Orphaned exports (THEME_COLORS, validate(), lerp()) are removed or wired to consumers
   5. All 21 previously-partial requirements are now fully satisfied (3-source cross-reference passes)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 08-01: TBD
+- [ ] 08-01-PLAN.md — Create VERIFICATION.md for Phase 2 (14 reqs) and Phase 3 (7 reqs) with independent source code evidence
+- [ ] 08-02-PLAN.md — Remove dead import, orphaned THEME_COLORS export, and orphaned lerp() function
 
 ## Progress
 
