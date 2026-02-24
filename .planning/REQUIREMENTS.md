@@ -16,18 +16,18 @@ Requirements for the presentation-ready release. Each maps to roadmap phases.
 
 ### Structure Rendering
 
-- [ ] **STRC-01**: Balanced parentheses rendered as formatted character sequences
-- [ ] **STRC-02**: Dyck paths rendered as lattice paths with up/down steps on a grid
+- [x] **STRC-01**: Balanced parentheses rendered as formatted character sequences
+- [x] **STRC-02**: Dyck paths rendered as lattice paths with up/down steps on a grid
 - [ ] **STRC-03**: Mountain ranges rendered as mountain-profile curves
 - [ ] **STRC-04**: Lattice paths below diagonal rendered on an n x n grid
 - [ ] **STRC-05**: Staircase polygons rendered as staircase-bounded shapes
-- [ ] **STRC-06**: Binary trees rendered with recursive node-edge layout
+- [x] **STRC-06**: Binary trees rendered with recursive node-edge layout
 - [ ] **STRC-07**: Rooted plane trees rendered with ordered children layout
 - [ ] **STRC-08**: Ballot sequences rendered as labeled vote sequences
 - [ ] **STRC-09**: Non-crossing partitions rendered on a circle with arcs
-- [ ] **STRC-10**: Triangulations rendered as convex polygons with diagonals
+- [x] **STRC-10**: Triangulations rendered as convex polygons with diagonals
 - [ ] **STRC-11**: Stack-sortable permutations rendered with stack visualization
-- [ ] **STRC-12**: Each structure correctly converts to/from Dyck word representation (round-trip identity verified for all C(4)=14 instances)
+- [x] **STRC-12**: Each structure correctly converts to/from Dyck word representation (round-trip identity verified for all C(4)=14 instances)
 
 ### Classical Bijections
 
@@ -98,18 +98,18 @@ Deferred to future release. Tracked but not in current roadmap.
 | FOUND-02 | Phase 1 | Complete |
 | FOUND-03 | Phase 1 | Complete |
 | FOUND-04 | Phase 1 | Complete |
-| STRC-01 | Phase 2 | Pending |
-| STRC-02 | Phase 2 | Pending |
+| STRC-01 | Phase 2 | Complete |
+| STRC-02 | Phase 2 | Complete |
 | STRC-03 | Phase 4 | Pending |
 | STRC-04 | Phase 4 | Pending |
 | STRC-05 | Phase 4 | Pending |
-| STRC-06 | Phase 2 | Pending |
+| STRC-06 | Phase 2 | Complete |
 | STRC-07 | Phase 4 | Pending |
 | STRC-08 | Phase 4 | Pending |
 | STRC-09 | Phase 4 | Pending |
-| STRC-10 | Phase 2 | Pending |
+| STRC-10 | Phase 2 | Complete |
 | STRC-11 | Phase 4 | Pending |
-| STRC-12 | Phase 2 | Pending |
+| STRC-12 | Phase 2 | Complete |
 | BIJC-01 | Phase 3 | Pending |
 | BIJC-02 | Phase 3 | Pending |
 | BIJC-03 | Phase 3 | Pending |

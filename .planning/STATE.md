@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-23)
 
 **Core value:** Presenter can pick any two Catalan structures and walk the class through an animated, step-by-step visual bijection transformation.
-**Current focus:** Phase 1 - Core Foundation
+**Current focus:** Phase 2 - Vertical Slice
 
 ## Current Position
 
-Phase: 1 of 7 (Core Foundation)
-Plan: 2 of 2 in current phase (phase complete)
-Status: Phase 1 Complete
-Last activity: 2026-02-24 -- Completed 01-02 HTML/Canvas shell
+Phase: 2 of 7 (Vertical Slice)
+Plan: 1 of 3 in current phase
+Status: Executing Phase 2
+Last activity: 2026-02-24 -- Completed 02-01 Structure Modules
 
-Progress: [██░░░░░░░░] 14%
+Progress: [███░░░░░░░] 21%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 1.5min
-- Total execution time: 0.05 hours
+- Total plans completed: 3
+- Average duration: 2.3min
+- Total execution time: 0.12 hours
 
 **By Phase:**
 
@@ -29,10 +29,11 @@ Progress: [██░░░░░░░░] 14%
 |-------|-------|-------|----------|
 | Phase 01 P01 | 2min | 3 tasks | 3 files |
 | Phase 01 P02 | 1min | 2 tasks | 4 files |
+| Phase 02 P01 | 4min | 2 tasks | 6 files |
 
 **Recent Trend:**
-- Last 5 plans: 2min, 1min
-- Trend: improving
+- Last 5 plans: 2min, 1min, 4min
+- Trend: stable
 
 *Updated after each plan completion*
 
@@ -49,6 +50,10 @@ Recent decisions affecting current work:
 - 01-01: Memoize and freeze enumerate() results for safe repeated access during presentation
 - [Phase 01]: 01-02: alpha:false on canvas for opaque white bg (better perf)
 - [Phase 01]: 01-02: Frozen theme object from getComputedStyle, no mutable global state
+- [Phase 02]: 02-01: Local tree builder in triangulation.js to keep structure modules independent
+- [Phase 02]: 02-01: In-order traversal layout for binary trees (sufficient for n<=4)
+- [Phase 02]: 02-01: Dashed diagonals + semi-transparent triangle fills for triangulation rendering
+- [Phase 02]: 02-01: Frozen registry with Object.freeze matching Phase 1 immutability pattern
 
 ### Pending Todos
 
@@ -62,5 +67,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 01-02-PLAN.md (HTML/Canvas shell) -- Phase 1 complete
+Stopped at: Completed 02-01-PLAN.md (Structure Modules)
 Resume file: None
