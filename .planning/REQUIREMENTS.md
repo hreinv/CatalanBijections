@@ -20,9 +20,9 @@ Requirements for the presentation-ready release. Each maps to roadmap phases.
 - [x] **STRC-02**: Dyck paths rendered as lattice paths with up/down steps on a grid
 - [x] **STRC-03**: Mountain ranges rendered as mountain-profile curves
 - [x] **STRC-04**: Lattice paths below diagonal rendered on an n x n grid
-- [ ] **STRC-05**: Staircase polygons rendered as staircase-bounded shapes
+- [x] **STRC-05**: Staircase polygons rendered as staircase-bounded shapes
 - [x] **STRC-06**: Binary trees rendered with recursive node-edge layout
-- [ ] **STRC-07**: Rooted plane trees rendered with ordered children layout
+- [x] **STRC-07**: Rooted plane trees rendered with ordered children layout
 - [x] **STRC-08**: Ballot sequences rendered as labeled vote sequences
 - [ ] **STRC-09**: Non-crossing partitions rendered on a circle with arcs
 - [x] **STRC-10**: Triangulations rendered as convex polygons with diagonals
@@ -102,9 +102,9 @@ Deferred to future release. Tracked but not in current roadmap.
 | STRC-02 | Phase 2 | Complete |
 | STRC-03 | Phase 4 | Complete |
 | STRC-04 | Phase 4 | Complete |
-| STRC-05 | Phase 4 | Pending |
+| STRC-05 | Phase 4 | Complete |
 | STRC-06 | Phase 2 | Complete |
-| STRC-07 | Phase 4 | Pending |
+| STRC-07 | Phase 4 | Complete |
 | STRC-08 | Phase 4 | Complete |
 | STRC-09 | Phase 4 | Pending |
 | STRC-10 | Phase 2 | Complete |
