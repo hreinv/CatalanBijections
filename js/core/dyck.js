@@ -14,6 +14,9 @@
 
 const CATALAN = [1, 1, 2, 5, 14];
 
+/** Memoization cache: n -> frozen array of Dyck words */
+const _cache = new Map();
+
 /**
  * Validate whether a word is a valid Dyck word.
  * @param {number[]} word - Array of +1 and -1 values
@@ -30,6 +33,9 @@ export function validate(word) {
 
 /**
  * Enumerate all Dyck words of order n.
+ * Results are cached (memoized) since enumerate() is called repeatedly
+ * when cycling through instances in the presentation UI.
+ *
  * Uses recursive generation: at each position, we can add +1 if opens < n,
  * or -1 if closes < opens (current opens count).
  *
@@ -42,12 +48,16 @@ export function enumerate(n) {
     throw new RangeError(`enumerate(n) requires n in 1..4, got ${n}`);
   }
 
+  if (_cache.has(n)) {
+    return _cache.get(n);
+  }
+
   const result = [];
   const target = 2 * n;
 
   function generate(word, opens, closes) {
     if (word.length === target) {
-      result.push(word.slice());
+      result.push(Object.freeze(word.slice()));
       return;
     }
     if (opens < n) {
@@ -75,5 +85,7 @@ export function enumerate(n) {
     `enumerate(${n}): produced invalid Dyck word`
   );
 
-  return result;
+  const frozen = Object.freeze(result);
+  _cache.set(n, frozen);
+  return frozen;
 }
