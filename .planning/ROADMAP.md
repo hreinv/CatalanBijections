@@ -126,10 +126,10 @@ Plans:
   1. Spacebar toggles play/pause, arrow keys step forward/back, and number keys control speed -- all without clicking
   2. The tool handles window resize, tab switching, and rapid input without visual glitches or state corruption
   3. All colors remain distinguishable when displayed on a typical classroom projector (verified on target hardware)
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 07-01: TBD
+- [ ] 07-01-PLAN.md — Keyboard shortcuts, tab-switch resilience, and Okabe-Ito colorblind-safe palette
 
 ### Phase 8: Verify Completed Work & Fix Integration Debt
 **Goal**: Formally verify all Phase 2 and Phase 3 requirements against success criteria, fix integration issues, and clean up tech debt so the audit passes for completed work
