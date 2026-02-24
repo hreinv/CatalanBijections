@@ -81,12 +81,12 @@ Plans:
   2. Every structure's toDyck/fromDyck round-trips correctly for all 14 instances at n=4 (verified by the existing verification harness)
   3. All 11 structures appear in the structure selector dropdowns and can be selected for side-by-side display
   4. Tree layouts (rooted plane trees) avoid node collisions for all 14 instances at n=4, including degenerate linear chains
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
-- [ ] 04-03: TBD
+- [ ] 04-01-PLAN.md — Mountain ranges, lattice paths, and ballot sequences (3 simple structures + registry/test update)
+- [ ] 04-02-PLAN.md — Staircase polygons and rooted plane trees (2 medium structures + registry/test update)
+- [ ] 04-03-PLAN.md — Non-crossing partitions and stack-sortable permutations (2 complex structures + final 11-structure verification)
 
 ### Phase 5: Remaining Bijections
 **Goal**: All 8 classical bijections animate with step-by-step explanations, covering the major known Catalan bijections
