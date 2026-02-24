@@ -36,9 +36,9 @@ Requirements for the presentation-ready release. Each maps to roadmap phases.
 - [x] **BIJC-03**: Parentheses to Binary Trees bijection with step-by-step animation (recursive nesting defines subtrees)
 - [ ] **BIJC-04**: Dyck Paths to Lattice Paths bijection with step-by-step animation (45 degree geometric rotation)
 - [ ] **BIJC-05**: Binary Trees to Rooted Plane Trees bijection with step-by-step animation (left-child/right-sibling rotation)
-- [ ] **BIJC-06**: Dyck Paths to Mountain Ranges bijection with step-by-step animation (visual reinterpretation)
+- [x] **BIJC-06**: Dyck Paths to Mountain Ranges bijection with step-by-step animation (visual reinterpretation)
 - [ ] **BIJC-07**: Non-crossing Partitions to Triangulations bijection with step-by-step animation (partition blocks to triangle fans)
-- [ ] **BIJC-08**: Ballot Sequences to Dyck Paths bijection with step-by-step animation (A-ahead = path above axis)
+- [x] **BIJC-08**: Ballot Sequences to Dyck Paths bijection with step-by-step animation (A-ahead = path above axis)
 
 ### Bridge System
 
@@ -115,9 +115,9 @@ Deferred to future release. Tracked but not in current roadmap.
 | BIJC-03 | Phase 3 | Complete |
 | BIJC-04 | Phase 5 | Pending |
 | BIJC-05 | Phase 5 | Pending |
-| BIJC-06 | Phase 5 | Pending |
+| BIJC-06 | Phase 5 | Complete |
 | BIJC-07 | Phase 5 | Pending |
-| BIJC-08 | Phase 5 | Pending |
+| BIJC-08 | Phase 5 | Complete |
 | BRDG-01 | Phase 6 | Pending |
 | BRDG-02 | Phase 6 | Pending |
 | BRDG-03 | Phase 6 | Pending |

@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-23)
 
 **Core value:** Presenter can pick any two Catalan structures and walk the class through an animated, step-by-step visual bijection transformation.
-**Current focus:** Phase 4 - Remaining Structures (Complete)
+**Current focus:** Phase 5 - Remaining Bijections (In Progress)
 
 ## Current Position
 
-Phase: 4 of 8 (Remaining Structures)
-Plan: 3 of 3 in current phase (COMPLETE)
-Status: Phase Complete
-Last activity: 2026-02-24 -- Completed 04-03 Non-Crossing Partitions and Stack-Sortable Permutations
+Phase: 5 of 8 (Remaining Bijections)
+Plan: 1 of 3 in current phase
+Status: In Progress
+Last activity: 2026-02-24 -- Completed 05-01 Ballot-to-Dyck and Dyck-to-Mountain Bijections
 
-Progress: [██████████] 100%
+Progress: [███████░░░] 70%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
+- Total plans completed: 14
 - Average duration: 2.5min
-- Total execution time: 0.52 hours
+- Total execution time: 0.57 hours
 
 **By Phase:**
 
@@ -40,9 +40,10 @@ Progress: [██████████] 100%
 | Phase 04 P01 | 2min | 2 tasks | 5 files |
 | Phase 04 P02 | 2min | 2 tasks | 4 files |
 | Phase 04 P03 | 4min | 2 tasks | 4 files |
+| Phase 05 P01 | 3min | 2 tasks | 3 files |
 
 **Recent Trend:**
-- Last 5 plans: 6min, 1min, 2min, 2min, 4min
+- Last 5 plans: 1min, 2min, 2min, 4min, 3min
 - Trend: stable
 
 *Updated after each plan completion*
@@ -93,6 +94,8 @@ Recent decisions affecting current work:
 - [Phase 04]: 04-03: Non-crossing partition stores dyckWord copy for reliable round-trip (same fallback pattern as staircase-polygon.js)
 - [Phase 04]: 04-03: Stack-sortable permutation toDyck uses inverse push-reconstruction rather than Knuth's greedy stack-sorting algorithm
 - [Phase 04]: 04-03: Non-crossing partition arcs rendered as quadratic curves bowed 30% toward center for visual clarity
+- [Phase 05]: 05-01: Mountain segments colored by segment index (not peak-only) to match Dyck path correspondence
+- [Phase 05]: 05-01: Ballot vote tallies rendered below each vote letter with same three-zone dimming as vote characters
 
 ### Pending Todos
 
@@ -106,5 +109,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 04-03-PLAN.md (Non-Crossing Partitions and Stack-Sortable Permutations) -- Phase 4 complete (3/3 plans done)
+Stopped at: Completed 05-01-PLAN.md (Ballot-to-Dyck and Dyck-to-Mountain Bijections) -- Phase 5 plan 1/3 done
 Resume file: None
