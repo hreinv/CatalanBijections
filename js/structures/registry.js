@@ -9,6 +9,9 @@ import * as parentheses from './parentheses.js';
 import * as dyckPath from './dyck-path.js';
 import * as binaryTree from './binary-tree.js';
 import * as triangulation from './triangulation.js';
+import * as mountainRange from './mountain-range.js';
+import * as latticePath from './lattice-path.js';
+import * as ballotSequence from './ballot-sequence.js';
 
 /**
  * Registry of all Catalan structure modules.
@@ -22,4 +25,7 @@ export const structures = Object.freeze({
   'dyck-path':      { module: dyckPath,       label: 'Dyck Paths' },
   'binary-tree':    { module: binaryTree,     label: 'Binary Trees' },
   'triangulation':  { module: triangulation,  label: 'Triangulations' },
+  'mountain-range':   { module: mountainRange,   label: 'Mountain Ranges' },
+  'lattice-path':     { module: latticePath,     label: 'Lattice Paths' },
+  'ballot-sequence':  { module: ballotSequence,  label: 'Ballot Sequences' },
 });
