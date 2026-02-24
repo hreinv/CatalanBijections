@@ -24,9 +24,9 @@ Requirements for the presentation-ready release. Each maps to roadmap phases.
 - [x] **STRC-06**: Binary trees rendered with recursive node-edge layout
 - [x] **STRC-07**: Rooted plane trees rendered with ordered children layout
 - [x] **STRC-08**: Ballot sequences rendered as labeled vote sequences
-- [ ] **STRC-09**: Non-crossing partitions rendered on a circle with arcs
+- [x] **STRC-09**: Non-crossing partitions rendered on a circle with arcs
 - [x] **STRC-10**: Triangulations rendered as convex polygons with diagonals
-- [ ] **STRC-11**: Stack-sortable permutations rendered with stack visualization
+- [x] **STRC-11**: Stack-sortable permutations rendered with stack visualization
 - [x] **STRC-12**: Each structure correctly converts to/from Dyck word representation (round-trip identity verified for all C(4)=14 instances)
 
 ### Classical Bijections
@@ -106,9 +106,9 @@ Deferred to future release. Tracked but not in current roadmap.
 | STRC-06 | Phase 2 | Complete |
 | STRC-07 | Phase 4 | Complete |
 | STRC-08 | Phase 4 | Complete |
-| STRC-09 | Phase 4 | Pending |
+| STRC-09 | Phase 4 | Complete |
 | STRC-10 | Phase 2 | Complete |
-| STRC-11 | Phase 4 | Pending |
+| STRC-11 | Phase 4 | Complete |
 | STRC-12 | Phase 2 | Complete |
 | BIJC-01 | Phase 3 | Complete |
 | BIJC-02 | Phase 3 | Complete |

@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-23)
 
 **Core value:** Presenter can pick any two Catalan structures and walk the class through an animated, step-by-step visual bijection transformation.
-**Current focus:** Phase 4 - Remaining Structures (In Progress)
+**Current focus:** Phase 4 - Remaining Structures (Complete)
 
 ## Current Position
 
 Phase: 4 of 8 (Remaining Structures)
-Plan: 2 of 3 in current phase
-Status: In Progress
-Last activity: 2026-02-24 -- Completed 04-02 Staircase Polygons and Rooted Plane Trees
+Plan: 3 of 3 in current phase (COMPLETE)
+Status: Phase Complete
+Last activity: 2026-02-24 -- Completed 04-03 Non-Crossing Partitions and Stack-Sortable Permutations
 
-Progress: [██████░░░░] 67%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 12
-- Average duration: 2.3min
-- Total execution time: 0.45 hours
+- Total plans completed: 13
+- Average duration: 2.5min
+- Total execution time: 0.52 hours
 
 **By Phase:**
 
@@ -39,9 +39,10 @@ Progress: [██████░░░░] 67%
 | Phase 08 P02 | 1min | 1 tasks | 3 files |
 | Phase 04 P01 | 2min | 2 tasks | 5 files |
 | Phase 04 P02 | 2min | 2 tasks | 4 files |
+| Phase 04 P03 | 4min | 2 tasks | 4 files |
 
 **Recent Trend:**
-- Last 5 plans: 3min, 6min, 1min, 2min, 2min
+- Last 5 plans: 6min, 1min, 2min, 2min, 4min
 - Trend: stable
 
 *Updated after each plan completion*
@@ -89,6 +90,9 @@ Recent decisions affecting current work:
 - [Phase 04]: 04-02: Staircase polygon stores dyckWord copy for trivial round-trip (same pattern as parentheses.js)
 - [Phase 04]: 04-02: Rooted plane tree uses DFS bijection directly rather than binary tree LCRS correspondence
 - [Phase 04]: 04-02: Width-accumulation layout places leaves at xOffset+0.5 with unit width slots
+- [Phase 04]: 04-03: Non-crossing partition stores dyckWord copy for reliable round-trip (same fallback pattern as staircase-polygon.js)
+- [Phase 04]: 04-03: Stack-sortable permutation toDyck uses inverse push-reconstruction rather than Knuth's greedy stack-sorting algorithm
+- [Phase 04]: 04-03: Non-crossing partition arcs rendered as quadratic curves bowed 30% toward center for visual clarity
 
 ### Pending Todos
 
@@ -102,5 +106,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 04-02-PLAN.md (Staircase Polygons and Rooted Plane Trees) -- Phase 4 plan 2 of 3 done
+Stopped at: Completed 04-03-PLAN.md (Non-Crossing Partitions and Stack-Sortable Permutations) -- Phase 4 complete (3/3 plans done)
 Resume file: None
