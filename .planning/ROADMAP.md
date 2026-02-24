@@ -112,11 +112,11 @@ Plans:
   1. Selecting any non-classical pair of structures produces an animated bijection by composing through Dyck words
   2. The bijection chain indicator shows which intermediate structures are used when composing (e.g., "Mountain Ranges -> Dyck Path -> Binary Tree")
   3. Pathfinding selects the shortest route through the bijection graph, preferring classical bijections over longer bridge paths
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 06-01: TBD
-- [ ] 06-02: TBD
+- [ ] 06-01-PLAN.md — Bridge module with bijection graph, BFS pathfinding, step composition, and router integration
+- [ ] 06-02-PLAN.md — Chain indicator UI in main.js and end-to-end verification of all 110 structure pairs
 
 ### Phase 7: Presentation Hardening
 **Goal**: The tool is reliable and fluid for live classroom presentation with keyboard-driven control
