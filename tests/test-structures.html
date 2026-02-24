@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Structure Module Tests -- Round-Trip Verification</title>
+  <style>
+    body { font-family: monospace; margin: 2rem; background: #fafafa; }
+    .pass { color: green; }
+    .fail { color: red; font-weight: bold; }
+    #results { white-space: pre-wrap; line-height: 1.6; }
+    h1 { font-size: 1.4rem; }
+    .summary { margin-top: 1rem; padding: 0.5rem; border: 2px solid; }
+    .summary.all-pass { border-color: green; color: green; }
+    .summary.has-fail { border-color: red; color: red; }
+  </style>
+</head>
+<body>
+  <h1>Structure Modules -- Round-Trip Test Suite</h1>
+  <div id="results">Loading modules...</div>
+
+  <script type="module">
+    const results = document.getElementById('results');
+    let passed = 0;
+    let failed = 0;
+
+    function log(msg, ok) {
+      const span = document.createElement('span');
+      span.className = ok ? 'pass' : 'fail';
+      span.textContent = (ok ? 'PASS' : 'FAIL') + ': ' + msg + '\n';
+      results.appendChild(span);
+      console.log((ok ? 'PASS' : 'FAIL') + ': ' + msg);
+      if (ok) passed++; else failed++;
+    }
+
+    function arraysEqual(a, b) {
+      if (a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return false;
+      }
+      return true;
+    }
+
+    try {
+      results.textContent = '';
+
+      // Import modules
+      const { enumerate } = await import('/js/core/dyck.js');
+      const parenthesesMod = await import('/js/structures/parentheses.js');
+      const dyckPathMod = await import('/js/structures/dyck-path.js');
+      const binaryTreeMod = await import('/js/structures/binary-tree.js');
+      const triangulationMod = await import('/js/structures/triangulation.js');
+      const { structures } = await import('/js/structures/registry.js');
+
+      const structureModules = [
+        { key: 'parentheses', name: 'Balanced Parentheses', mod: parenthesesMod },
+        { key: 'dyck-path', name: 'Dyck Paths', mod: dyckPathMod },
+        { key: 'binary-tree', name: 'Binary Trees', mod: binaryTreeMod },
+        { key: 'triangulation', name: 'Triangulations', mod: triangulationMod },
+      ];
+
+      // --- Test 1: Module interface verification ---
+      log('--- Module Interface Checks ---', true);
+
+      for (const { name, mod } of structureModules) {
+        log(`${name} exports fromDyck`, typeof mod.fromDyck === 'function');
+        log(`${name} exports toDyck`, typeof mod.toDyck === 'function');
+        log(`${name} exports draw`, typeof mod.draw === 'function');
+      }
+
+      // --- Test 2: Round-trip verification for each structure at n=1..4 ---
+      log('--- Round-Trip Verification ---', true);
+
+      let totalRoundTrips = 0;
+
+      for (const { name, mod } of structureModules) {
+        for (let n = 1; n <= 4; n++) {
+          const words = enumerate(n);
+          let passCount = 0;
+
+          for (const word of words) {
+            const instance = mod.fromDyck(word);
+            const roundTripped = mod.toDyck(instance);
+            const wordArray = Array.from(word); // Handle frozen arrays
+            if (arraysEqual(wordArray, roundTripped)) {
+              passCount++;
+            } else {
+              log(`${name} n=${n} MISMATCH: [${wordArray}] -> [${roundTripped}]`, false);
+            }
+          }
+
+          const allPassed = passCount === words.length;
+          log(`${name} n=${n}: ${passCount}/${words.length} round-trips passed`, allPassed);
+          totalRoundTrips += passCount;
+        }
+      }
+
+      // Expected: 4 structures x (1+2+5+14) = 4 x 22 = 88 round-trips
+      log(`Total round-trips: ${totalRoundTrips}/88`, totalRoundTrips === 88);
+
+      // --- Test 3: Registry verification ---
+      log('--- Registry Checks ---', true);
+
+      log('Registry is an object', typeof structures === 'object' && structures !== null);
+      log('Registry has 4 entries', Object.keys(structures).length === 4);
+
+      const expectedKeys = ['parentheses', 'dyck-path', 'binary-tree', 'triangulation'];
+      for (const key of expectedKeys) {
+        const entry = structures[key];
+        log(`Registry has key '${key}'`, entry !== undefined);
+        if (entry) {
+          log(`Registry '${key}' has module`, entry.module !== undefined);
+          log(`Registry '${key}' has label`, typeof entry.label === 'string' && entry.label.length > 0);
+          log(`Registry '${key}' module.fromDyck is function`, typeof entry.module.fromDyck === 'function');
+        }
+      }
+
+      // Test registry is frozen
+      try {
+        structures['newKey'] = { module: null, label: 'Test' };
+        log('Registry is frozen (immutable)', false);
+      } catch (e) {
+        log('Registry is frozen (immutable)', true);
+      }
+
+      // --- Test 4: Edge cases ---
+      log('--- Edge Cases ---', true);
+
+      // n=1 single word
+      const singleWord = enumerate(1)[0]; // [1, -1]
+      for (const { name, mod } of structureModules) {
+        const instance = mod.fromDyck(singleWord);
+        const rt = mod.toDyck(instance);
+        log(`${name} handles n=1 [1,-1]`, arraysEqual(Array.from(singleWord), rt));
+      }
+
+      // Parentheses-specific: verify string output
+      const parenStr = parenthesesMod.fromDyck([1, 1, -1, -1]);
+      log('Parentheses fromDyck([1,1,-1,-1]) = "(())"', parenStr === '(())');
+
+      const parenStr2 = parenthesesMod.fromDyck([1, -1, 1, -1]);
+      log('Parentheses fromDyck([1,-1,1,-1]) = "()()"', parenStr2 === '()()');
+
+      // Binary tree: verify null for empty word
+      const emptyTree = binaryTreeMod.fromDyck([]);
+      log('Binary tree fromDyck([]) returns null', emptyTree === null);
+
+      // --- Summary ---
+      const summary = document.createElement('div');
+      summary.className = 'summary ' + (failed === 0 ? 'all-pass' : 'has-fail');
+      summary.textContent = `\nDone: ${passed} passed, ${failed} failed out of ${passed + failed} total`;
+      results.appendChild(summary);
+
+    } catch (e) {
+      results.textContent = 'FAIL: Module import error -- ' + e.message + '\n' + e.stack;
+      console.error('Test suite error:', e);
+    }
+  </script>
+</body>
+</html>
