@@ -48,11 +48,11 @@ Requirements for the presentation-ready release. Each maps to roadmap phases.
 
 ### Animation Engine
 
-- [ ] **ANIM-01**: Timestamp-based animation loop using requestAnimationFrame
-- [ ] **ANIM-02**: Play/pause toggle for bijection animations
-- [ ] **ANIM-03**: Step forward and step backward controls for manual progression
-- [ ] **ANIM-04**: Jump to start and jump to end controls
-- [ ] **ANIM-05**: Speed slider adjustable from 0.5x to 3x
+- [x] **ANIM-01**: Timestamp-based animation loop using requestAnimationFrame
+- [x] **ANIM-02**: Play/pause toggle for bijection animations
+- [x] **ANIM-03**: Step forward and step backward controls for manual progression
+- [x] **ANIM-04**: Jump to start and jump to end controls
+- [x] **ANIM-05**: Speed slider adjustable from 0.5x to 3x
 - [ ] **ANIM-06**: Smooth easing transitions between animation steps
 
 ### UI Controls
@@ -121,11 +121,11 @@ Deferred to future release. Tracked but not in current roadmap.
 | BRDG-01 | Phase 6 | Pending |
 | BRDG-02 | Phase 6 | Pending |
 | BRDG-03 | Phase 6 | Pending |
-| ANIM-01 | Phase 2 | Pending |
-| ANIM-02 | Phase 2 | Pending |
-| ANIM-03 | Phase 2 | Pending |
-| ANIM-04 | Phase 2 | Pending |
-| ANIM-05 | Phase 2 | Pending |
+| ANIM-01 | Phase 2 | Complete |
+| ANIM-02 | Phase 2 | Complete |
+| ANIM-03 | Phase 2 | Complete |
+| ANIM-04 | Phase 2 | Complete |
+| ANIM-05 | Phase 2 | Complete |
 | ANIM-06 | Phase 3 | Pending |
 | UICT-01 | Phase 2 | Complete |
 | UICT-02 | Phase 2 | Complete |
@@ -143,4 +143,4 @@ Deferred to future release. Tracked but not in current roadmap.
 
 ---
 *Requirements defined: 2026-02-23*
-*Last updated: 2026-02-23 after roadmap creation*
+*Last updated: 2026-02-24 after 02-03 completion*
