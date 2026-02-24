@@ -9,8 +9,8 @@
  * also registers it for target|source with a reversed flag.
  *
  * Enhanced with Dyck bridge fallback: when no classical bijection
- * is registered for a pair, the router uses BFS pathfinding through
- * the bijection graph and composes steps from multiple legs.
+ * is registered for a pair, the router uses BFS pathfinding to
+ * confirm connectivity and shows a direct source-to-target animation.
  */
 
 import * as parensDyck from './parens-dyck.js';
@@ -21,7 +21,7 @@ import * as dyckMountain from './dyck-mountain.js';
 import * as dyckLattice from './dyck-lattice.js';
 import * as binaryPlaneTree from './binary-plane-tree.js';
 import * as ncpTriang from './ncp-triang.js';
-import { findPath, composeSteps } from './bridge.js';
+import { findPath, directSteps } from './bridge.js';
 
 /** @type {Object.<string, { module: Object, reversed: boolean }>} */
 const registry = {};
@@ -59,31 +59,7 @@ register(binaryPlaneTree);
 register(ncpTriang);
 
 // =============================================================================
-// Classical Lookup (private, passed as callback to composeSteps)
-// =============================================================================
-
-/**
- * Look up and generate animation steps using only the classical registry.
- * This is the callback passed to composeSteps() to avoid circular imports.
- * Handles the reversed flag correctly by checking both forward and reverse keys.
- *
- * @param {string} sourceKey - Source structure key
- * @param {string} targetKey - Target structure key
- * @param {number[]} dyckWord - Current Dyck word as +1/-1 array
- * @param {number} n - Catalan order
- * @returns {Array<{description: string, drawFrame: Function}>|null}
- */
-function classicalGetSteps(sourceKey, targetKey, dyckWord, n) {
-  const key = `${sourceKey}|${targetKey}`;
-  const entry = registry[key];
-
-  if (!entry) return null;
-
-  return entry.module.getSteps(dyckWord, n, entry.reversed);
-}
-
-// =============================================================================
-// Enhanced Public API
+// Public API
 // =============================================================================
 
 /**
@@ -91,7 +67,7 @@ function classicalGetSteps(sourceKey, targetKey, dyckWord, n) {
  *
  * Returns an object { steps, path } for non-identity pairs:
  *   - Classical pairs: steps from the direct bijection module, 2-element path
- *   - Non-classical pairs: composed steps via bridge pathfinding, multi-element path
+ *   - Non-classical pairs: direct source-to-target steps via bridge, 2-element path
  *   - Identity (source === target): returns null
  *
  * @param {string} sourceKey - Source structure key (e.g. 'parentheses')
@@ -115,21 +91,13 @@ export function getSteps(sourceKey, targetKey, dyckWord, n) {
     };
   }
 
-  // No classical entry: use bridge pathfinding + composition
+  // No classical entry: confirm connectivity, then show direct correspondence
   const pathResult = findPath(sourceKey, targetKey);
 
   if (!pathResult || pathResult.edges.length === 0) return null;
 
-  const composedSteps = composeSteps(
-    pathResult.path,
-    pathResult.edges,
-    dyckWord,
-    n,
-    classicalGetSteps,
-  );
-
   return {
-    steps: composedSteps,
-    path: pathResult.path,
+    steps: directSteps(sourceKey, targetKey, dyckWord),
+    path: [sourceKey, targetKey],
   };
 }
