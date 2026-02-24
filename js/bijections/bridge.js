@@ -7,7 +7,7 @@
  * use their direct edges while "island" structures (staircase-polygon,
  * stack-sortable-perm) route through the Dyck word hub.
  *
- * Exports: findPath, composeSteps
+ * Exports: findPath, directSteps
  */
 
 import { structures } from '../structures/registry.js';
@@ -133,103 +133,65 @@ export function findPath(source, target) {
 }
 
 // =============================================================================
-// Step Composition
+// Direct Steps (non-classical bijections)
 // =============================================================================
 
 /**
- * Compose animation steps for a multi-leg bijection path.
+ * Generate a simple 3-step animation showing source and target structures
+ * directly, without exposing intermediate Dyck word conversions.
  *
- * For classical legs: delegates to the classical getSteps callback.
- * For bridge legs: creates simple 2-step conversion sequences using
- *   the structure modules' fromDyck() and draw() functions.
- * Between multi-leg boundaries: inserts a transition step showing
- *   the intermediate structure rendered on both panels.
+ * The Dyck word conversion happens internally — the viewer only sees
+ * the one-to-one correspondence between source and target.
  *
- * @param {string[]} path - Array of structure keys [source, ..., target]
- * @param {Array<{from: string, to: string, type: string}>} edges - Edge metadata for each leg
+ * @param {string} sourceKey - Source structure key
+ * @param {string} targetKey - Target structure key
  * @param {number[]} dyckWord - Current Dyck word as +1/-1 array
- * @param {number} n - Catalan order
- * @param {Function} classicalGetSteps - Callback: (sourceKey, targetKey, dyckWord, n) => steps[]|null
  * @returns {Array<{description: string, drawFrame: Function}>}
  */
-export function composeSteps(path, edges, dyckWord, n, classicalGetSteps) {
-  const allSteps = [];
+export function directSteps(sourceKey, targetKey, dyckWord) {
+  const sourceLabel = structures[sourceKey].label;
+  const targetLabel = structures[targetKey].label;
+  const sourceModule = structures[sourceKey].module;
+  const targetModule = structures[targetKey].module;
 
-  for (let i = 0; i < edges.length; i++) {
-    const from = edges[i].from;
-    const to = edges[i].to;
-    const edgeType = edges[i].type;
+  return [
+    // Step 1: Introduction — show source structure, target panel empty
+    {
+      description: `Start with ${sourceLabel}`,
+      drawFrame(ctx, _progress, opts) {
+        const { sourceBox, theme, colors } = opts;
+        const instance = sourceModule.fromDyck(dyckWord);
+        sourceModule.draw(ctx, instance, { ...sourceBox, theme, colors });
+      },
+    },
+    // Step 2: Reveal — fade in the target alongside the source
+    {
+      description: `Mapping ${sourceLabel} to ${targetLabel}`,
+      drawFrame(ctx, progress, opts) {
+        const { sourceBox, targetBox, theme, colors } = opts;
 
-    if (edgeType === 'classical') {
-      // Use the existing classical bijection module
-      const classicalSteps = classicalGetSteps(from, to, dyckWord, n);
-      if (classicalSteps) {
-        allSteps.push(...classicalSteps);
-      }
-    } else {
-      // Bridge conversion: 2 simple steps
-      const sourceLabel = structures[from].label;
-      const targetLabel = structures[to].label;
-      const sourceModule = structures[from].module;
-      const targetModule = structures[to].module;
+        const srcInstance = sourceModule.fromDyck(dyckWord);
+        sourceModule.draw(ctx, srcInstance, { ...sourceBox, theme, colors });
 
-      // Step 1: Show source structure with full correspondence colors
-      allSteps.push({
-        description: `Converting ${sourceLabel} to Dyck word`,
-        drawFrame(ctx, _easedProgress, opts) {
-          const { sourceBox, targetBox, theme, colors } = opts;
-          const instance = sourceModule.fromDyck(dyckWord);
-          sourceModule.draw(ctx, instance, {
-            ...sourceBox,
-            theme,
-            colors,
-          });
-          // Target box is empty (no rendering)
-        },
-      });
+        ctx.save();
+        ctx.globalAlpha = progress;
+        const tgtInstance = targetModule.fromDyck(dyckWord);
+        targetModule.draw(ctx, tgtInstance, { ...targetBox, theme, colors });
+        ctx.restore();
+      },
+    },
+    // Step 3: Complete — both structures at full opacity
+    {
+      description: `Bijection complete: ${sourceLabel} corresponds to ${targetLabel}`,
+      drawFrame(ctx, _progress, opts) {
+        const { sourceBox, targetBox, theme, colors } = opts;
 
-      // Step 2: Show target structure with full correspondence colors
-      allSteps.push({
-        description: `Building ${targetLabel} from Dyck word`,
-        drawFrame(ctx, _easedProgress, opts) {
-          const { sourceBox, targetBox, theme, colors } = opts;
-          const instance = targetModule.fromDyck(dyckWord);
-          targetModule.draw(ctx, instance, {
-            ...targetBox,
-            theme,
-            colors,
-          });
-          // Source box is empty (no rendering)
-        },
-      });
-    }
+        const srcInstance = sourceModule.fromDyck(dyckWord);
+        sourceModule.draw(ctx, srcInstance, { ...sourceBox, theme, colors });
 
-    // Insert transition step between legs (NOT between bridge steps within same leg)
-    if (i < edges.length - 1) {
-      const intermediateKey = to;
-      const intermediateLabel = structures[intermediateKey].label;
-      const intermediateModule = structures[intermediateKey].module;
-
-      allSteps.push({
-        description: `Intermediate: ${intermediateLabel}`,
-        drawFrame(ctx, _easedProgress, opts) {
-          const { sourceBox, targetBox, theme, colors } = opts;
-          const instance = intermediateModule.fromDyck(dyckWord);
-          // Render intermediate structure on both panels
-          intermediateModule.draw(ctx, instance, {
-            ...sourceBox,
-            theme,
-            colors,
-          });
-          intermediateModule.draw(ctx, instance, {
-            ...targetBox,
-            theme,
-            colors,
-          });
-        },
-      });
-    }
-  }
-
-  return allSteps;
+        const tgtInstance = targetModule.fromDyck(dyckWord);
+        targetModule.draw(ctx, tgtInstance, { ...targetBox, theme, colors });
+      },
+    },
+  ];
 }
