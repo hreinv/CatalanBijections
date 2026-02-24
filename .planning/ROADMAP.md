@@ -97,12 +97,12 @@ Plans:
   2. Binary-Trees-to-Rooted-Plane-Trees bijection animates showing the left-child/right-sibling rotation correspondence
   3. Dyck-Paths-to-Mountain-Ranges, Non-crossing-Partitions-to-Triangulations, and Ballot-Sequences-to-Dyck-Paths bijections each animate with 5+ steps and text descriptions
   4. Every classical bijection produces correct results for all 14 instances at n=4 (cross-checked against Dyck word composition)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 05-01: TBD
-- [ ] 05-02: TBD
-- [ ] 05-03: TBD
+- [ ] 05-01-PLAN.md — Ballot-to-Dyck and Dyck-to-Mountain bijections (2 simple visual reinterpretation bijections)
+- [ ] 05-02-PLAN.md — Dyck-to-Lattice and Binary-Trees-to-Rooted-Plane-Trees bijections (2 medium structural transformations)
+- [ ] 05-03-PLAN.md — Non-crossing-Partitions-to-Triangulations bijection and all-8-bijection verification
 
 ### Phase 6: Dyck Bridge
 **Goal**: Presenter can select any two of the 11 structures and see an animated bijection, with intermediate structures shown when composing through the Dyck word bridge
