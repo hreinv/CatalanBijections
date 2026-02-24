@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-23)
 
 **Core value:** Presenter can pick any two Catalan structures and walk the class through an animated, step-by-step visual bijection transformation.
-**Current focus:** Phase 8 - Verify & Fix Integration Debt (Complete)
+**Current focus:** Phase 4 - Remaining Structures (In Progress)
 
 ## Current Position
 
-Phase: 8 of 8 (Verify & Fix Integration Debt)
-Plan: 2 of 2 in current phase
-Status: Complete
-Last activity: 2026-02-24 -- Completed 08-02 Dead Code Removal
+Phase: 4 of 8 (Remaining Structures)
+Plan: 1 of 3 in current phase
+Status: In Progress
+Last activity: 2026-02-24 -- Completed 04-01 Three Simple Structure Modules
 
-Progress: [██████████] 100%
+Progress: [███░░░░░░░] 33%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
+- Total plans completed: 11
 - Average duration: 2.3min
-- Total execution time: 0.39 hours
+- Total execution time: 0.42 hours
 
 **By Phase:**
 
@@ -37,10 +37,11 @@ Progress: [██████████] 100%
 | Phase 03 P03 | 3min | 2 tasks | 3 files |
 | Phase 08 P01 | 6min | 2 tasks | 2 files |
 | Phase 08 P02 | 1min | 1 tasks | 3 files |
+| Phase 04 P01 | 2min | 2 tasks | 5 files |
 
 **Recent Trend:**
-- Last 5 plans: 2min, 2min, 3min, 6min, 1min
-- Trend: stable (surgical code fix plan very fast)
+- Last 5 plans: 2min, 3min, 6min, 1min, 2min
+- Trend: stable
 
 *Updated after each plan completion*
 
@@ -81,6 +82,9 @@ Recent decisions affecting current work:
 - [Phase 08]: 08-01: toDyck() satisfies STRC-12 via test harness verification even though never called at runtime
 - [Phase 08]: 08-01: Dead triangulation import and orphaned exports noted for Plan 08-02, not blocking verification
 - [Phase 08]: 08-02: Preserved validate() in dyck.js despite audit flagging it -- used internally by enumerate() for self-verification
+- [Phase 04]: 04-01: Mountain range uses correspondence colors for peaks only (not every vertex like Dyck path)
+- [Phase 04]: 04-01: Lattice path maps +1 to R (right) and -1 to U (up) for standard below-diagonal path
+- [Phase 04]: 04-01: Ballot sequence tally rendered as compact A-count:B-count below each vote letter
 
 ### Pending Todos
 
@@ -94,5 +98,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 08-02-PLAN.md (Dead Code Removal) -- Phase 8 complete, all plans done
+Stopped at: Completed 04-01-PLAN.md (Three Simple Structure Modules) -- Phase 4 plan 1 of 3 done
 Resume file: None
