@@ -10,6 +10,8 @@ import { enumerate } from './core/dyck.js';
 import { CORRESPONDENCE_COLORS } from './core/colors.js';
 import { structures } from './structures/registry.js';
 import { createAnimationEngine } from './engine/animation.js';
+import { easeInOutCubic } from './core/easing.js';
+import { getSteps as routerGetSteps } from './bijections/router.js';
 
 // --- Application State ---
 
@@ -94,6 +96,49 @@ function updateDerivedState() {
   dom.instanceIndicator.textContent = `${state.instanceIndex + 1} of ${state.dyckWords.length}`;
 }
 
+// --- Bijection Step Loading ---
+
+/**
+ * Query the bijection router for animation steps matching the current
+ * source/target pair. Updates animation state and step description.
+ */
+function loadBijectionSteps() {
+  const result = routerGetSteps(state.sourceKey, state.targetKey, state.currentDyck, state.n);
+  if (result !== null) {
+    state.animation.steps = result;
+    state.animation.currentStep = 0;
+    state.animation.progress = 0.0;
+  } else {
+    state.animation.steps = [];
+  }
+  updateStepDescription();
+}
+
+/**
+ * Update the step description panel text based on current animation state.
+ * Shows step info during animation, default message otherwise.
+ */
+function updateStepDescription() {
+  if (!dom.stepDescription) return;
+
+  if (state.animation.steps.length > 0 && state.animation.steps[state.animation.currentStep]) {
+    const step = state.animation.steps[state.animation.currentStep];
+    dom.stepDescription.textContent =
+      `Step ${state.animation.currentStep + 1} of ${state.animation.steps.length}: ${step.description}`;
+  } else {
+    // Check if this is a pair with no registered bijection vs no pair selected
+    const result = routerGetSteps(state.sourceKey, state.targetKey, state.currentDyck, state.n);
+    if (result === null && state.sourceKey !== state.targetKey) {
+      const sourceLabel = structures[state.sourceKey].label;
+      const targetLabel = structures[state.targetKey].label;
+      dom.stepDescription.textContent =
+        `${sourceLabel} \u2194 ${targetLabel}: No bijection available for this pair.`;
+    } else {
+      dom.stepDescription.textContent = 'Select two structures to see a bijection animation.';
+    }
+  }
+}
+
 // --- Rendering ---
 
 /**
@@ -112,19 +157,17 @@ function render() {
   const panelWidth = (canvasWidth - padding * 3) / 2;
   const panelHeight = canvasHeight - padding * 2;
 
-  // Draw panel labels
+  // --- Shared: panel labels and divider (both modes) ---
+  const sourceLabel = structures[state.sourceKey].label;
+  const targetLabel = structures[state.targetKey].label;
+
   ctx.fillStyle = theme.strokeColor;
   ctx.font = `bold 16px ${theme.fontFamily}`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
-
-  const sourceLabel = structures[state.sourceKey].label;
-  const targetLabel = structures[state.targetKey].label;
-
   ctx.fillText(sourceLabel, padding + panelWidth / 2, padding);
   ctx.fillText(targetLabel, padding * 2 + panelWidth + panelWidth / 2, padding);
 
-  // Draw vertical divider
   const dividerX = padding + panelWidth + padding / 2;
   ctx.strokeStyle = '#E0E0E0';
   ctx.lineWidth = 1;
@@ -133,29 +176,52 @@ function render() {
   ctx.lineTo(dividerX, canvasHeight - padding);
   ctx.stroke();
 
-  // Render source structure (left panel)
-  const sourceModule = structures[state.sourceKey].module;
-  const sourceInstance = sourceModule.fromDyck(state.currentDyck);
-  sourceModule.draw(ctx, sourceInstance, {
+  // --- Layout boxes for animation drawFrame ---
+  const sourceBox = {
     x: padding,
     y: padding + labelHeight,
     width: panelWidth,
     height: panelHeight - labelHeight,
-    theme,
-    colors: CORRESPONDENCE_COLORS,
-  });
-
-  // Render target structure (right panel)
-  const targetModule = structures[state.targetKey].module;
-  const targetInstance = targetModule.fromDyck(state.currentDyck);
-  targetModule.draw(ctx, targetInstance, {
+  };
+  const targetBox = {
     x: padding * 2 + panelWidth,
     y: padding + labelHeight,
     width: panelWidth,
     height: panelHeight - labelHeight,
-    theme,
-    colors: CORRESPONDENCE_COLORS,
-  });
+  };
+
+  // --- Dual-mode: animation vs static ---
+  const currentStep = state.animation.steps[state.animation.currentStep];
+  if (state.animation.steps.length > 0 && currentStep) {
+    // Animation mode: apply easing to raw linear progress, delegate to step drawFrame
+    const easedProgress = easeInOutCubic(state.animation.progress);
+    currentStep.drawFrame(ctx, easedProgress, {
+      sourceBox,
+      targetBox,
+      theme,
+      colors: CORRESPONDENCE_COLORS,
+      currentStep: state.animation.currentStep,
+      totalSteps: state.animation.steps.length,
+    });
+    updateStepDescription();
+  } else {
+    // Static mode: render source and target structures side-by-side
+    const sourceModule = structures[state.sourceKey].module;
+    const sourceInstance = sourceModule.fromDyck(state.currentDyck);
+    sourceModule.draw(ctx, sourceInstance, {
+      ...sourceBox,
+      theme,
+      colors: CORRESPONDENCE_COLORS,
+    });
+
+    const targetModule = structures[state.targetKey].module;
+    const targetInstance = targetModule.fromDyck(state.currentDyck);
+    targetModule.draw(ctx, targetInstance, {
+      ...targetBox,
+      theme,
+      colors: CORRESPONDENCE_COLORS,
+    });
+  }
 }
 
 // --- Event Handlers ---
@@ -163,12 +229,14 @@ function render() {
 function onSourceChange() {
   state.sourceKey = dom.sourceSelect.value;
   resetAnimation();
+  loadBijectionSteps();
   render();
 }
 
 function onTargetChange() {
   state.targetKey = dom.targetSelect.value;
   resetAnimation();
+  loadBijectionSteps();
   render();
 }
 
@@ -177,6 +245,7 @@ function onNChange() {
   state.instanceIndex = 0;
   resetAnimation();
   updateDerivedState();
+  loadBijectionSteps();
   render();
 }
 
@@ -187,6 +256,7 @@ function onPrev() {
     : state.instanceIndex - 1;
   resetAnimation();
   updateDerivedState();
+  loadBijectionSteps();
   render();
 }
 
@@ -197,6 +267,7 @@ function onNext() {
     : state.instanceIndex + 1;
   resetAnimation();
   updateDerivedState();
+  loadBijectionSteps();
   render();
 }
 
@@ -243,6 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
   dom.btnEnd = document.getElementById('btn-end');
   dom.speedSlider = document.getElementById('speed-slider');
   dom.speedDisplay = document.getElementById('speed-display');
+  dom.stepDescription = document.getElementById('step-description');
 
   // Setup canvas
   ({ ctx, width: canvasWidth, height: canvasHeight } = setupCanvas(canvas));
@@ -258,6 +330,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initial render
   render();
+
+  // Load bijection steps for initial structure pair
+  loadBijectionSteps();
 
   console.log(`App initialized: ${canvasWidth}x${canvasHeight}, n=${state.n}, ${state.dyckWords.length} instances`);
 
