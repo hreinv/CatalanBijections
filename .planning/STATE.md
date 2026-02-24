@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-23)
 
 **Core value:** Presenter can pick any two Catalan structures and walk the class through an animated, step-by-step visual bijection transformation.
-**Current focus:** Phase 2 - Vertical Slice
+**Current focus:** Phase 3 - First Bijections
 
 ## Current Position
 
-Phase: 2 of 7 (Vertical Slice) -- COMPLETE
-Plan: 3 of 3 in current phase
-Status: Phase 2 Complete
-Last activity: 2026-02-24 -- Completed 02-03 Animation Engine
+Phase: 3 of 7 (First Bijections)
+Plan: 1 of 3 in current phase
+Status: Executing
+Last activity: 2026-02-24 -- Completed 03-01 Bijection Infrastructure
 
-Progress: [████░░░░░░] 36%
+Progress: [█████░░░░░] 43%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
+- Total plans completed: 6
 - Average duration: 2.2min
-- Total execution time: 0.18 hours
+- Total execution time: 0.22 hours
 
 **By Phase:**
 
@@ -32,9 +32,10 @@ Progress: [████░░░░░░] 36%
 | Phase 02 P01 | 4min | 2 tasks | 6 files |
 | Phase 02 P02 | 2min | 2 tasks | 3 files |
 | Phase 02 P03 | 2min | 2 tasks | 2 files |
+| Phase 03 P01 | 2min | 2 tasks | 5 files |
 
 **Recent Trend:**
-- Last 5 plans: 2min, 1min, 4min, 2min, 2min
+- Last 5 plans: 1min, 4min, 2min, 2min, 2min
 - Trend: stable
 
 *Updated after each plan completion*
@@ -64,6 +65,9 @@ Recent decisions affecting current work:
 - [Phase 02]: 02-03: 800ms default step duration (STEP_DURATION_MS constant, tunable later)
 - [Phase 02]: 02-03: Empty-steps handled as no-op rather than disabling controls
 - [Phase 02]: 02-03: resetAnimation() in all state change handlers to prevent orphan rAF loops
+- [Phase 03]: 03-01: Easing applied in render() not animation engine -- prevents double-easing
+- [Phase 03]: 03-01: Router uses sourceKey|targetKey composite keys with automatic reverse registration
+- [Phase 03]: 03-01: updateStepDescription shows structure labels when no bijection available for pair
 
 ### Pending Todos
 
@@ -77,5 +81,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 02-03-PLAN.md (Animation Engine) -- Phase 2 Complete
+Stopped at: Completed 03-01-PLAN.md (Bijection Infrastructure)
 Resume file: None

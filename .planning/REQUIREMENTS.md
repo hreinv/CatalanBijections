@@ -53,14 +53,14 @@ Requirements for the presentation-ready release. Each maps to roadmap phases.
 - [x] **ANIM-03**: Step forward and step backward controls for manual progression
 - [x] **ANIM-04**: Jump to start and jump to end controls
 - [x] **ANIM-05**: Speed slider adjustable from 0.5x to 3x
-- [ ] **ANIM-06**: Smooth easing transitions between animation steps
+- [x] **ANIM-06**: Smooth easing transitions between animation steps
 
 ### UI Controls
 
 - [x] **UICT-01**: Structure A and Structure B dropdown selectors for choosing any two structures
 - [x] **UICT-02**: n selector (1-4) to set the Catalan number index
 - [x] **UICT-03**: Instance navigator with previous/next buttons and "X of Y" indicator
-- [ ] **UICT-04**: Step description text panel showing current bijection step explanation
+- [x] **UICT-04**: Step description text panel showing current bijection step explanation
 - [x] **UICT-05**: Side-by-side dual-panel layout with source structure left, target structure right
 - [ ] **UICT-06**: Color-coded element correspondence (matching elements share colors across both panels)
 - [ ] **UICT-07**: Active transformation step highlighting (current step pulses/glows, others dim)
@@ -126,11 +126,11 @@ Deferred to future release. Tracked but not in current roadmap.
 | ANIM-03 | Phase 2 | Complete |
 | ANIM-04 | Phase 2 | Complete |
 | ANIM-05 | Phase 2 | Complete |
-| ANIM-06 | Phase 3 | Pending |
+| ANIM-06 | Phase 3 | Complete |
 | UICT-01 | Phase 2 | Complete |
 | UICT-02 | Phase 2 | Complete |
 | UICT-03 | Phase 2 | Complete |
-| UICT-04 | Phase 3 | Pending |
+| UICT-04 | Phase 3 | Complete |
 | UICT-05 | Phase 2 | Complete |
 | UICT-06 | Phase 3 | Pending |
 | UICT-07 | Phase 3 | Pending |
