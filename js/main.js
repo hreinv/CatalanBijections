@@ -24,6 +24,7 @@ const state = {
   currentDyck: null,
   animation: {
     steps: [],
+    path: [],
     currentStep: 0,
     progress: 0.0,
     playing: false,
@@ -105,11 +106,13 @@ function updateDerivedState() {
 function loadBijectionSteps() {
   const result = routerGetSteps(state.sourceKey, state.targetKey, state.currentDyck, state.n);
   if (result !== null) {
-    state.animation.steps = result;
+    state.animation.steps = result.steps;
+    state.animation.path = result.path;
     state.animation.currentStep = 0;
     state.animation.progress = 0.0;
   } else {
     state.animation.steps = [];
+    state.animation.path = [];
   }
   updateStepDescription();
 }
@@ -123,19 +126,22 @@ function updateStepDescription() {
 
   if (state.animation.steps.length > 0 && state.animation.steps[state.animation.currentStep]) {
     const step = state.animation.steps[state.animation.currentStep];
-    dom.stepDescription.textContent =
-      `Step ${state.animation.currentStep + 1} of ${state.animation.steps.length}: ${step.description}`;
-  } else {
-    // Check if this is a pair with no registered bijection vs no pair selected
-    const result = routerGetSteps(state.sourceKey, state.targetKey, state.currentDyck, state.n);
-    if (result === null && state.sourceKey !== state.targetKey) {
-      const sourceLabel = structures[state.sourceKey].label;
-      const targetLabel = structures[state.targetKey].label;
-      dom.stepDescription.textContent =
-        `${sourceLabel} \u2194 ${targetLabel}: No bijection available for this pair.`;
+    const stepText = `Step ${state.animation.currentStep + 1} of ${state.animation.steps.length}: ${step.description}`;
+
+    // Show chain indicator for composed bijections (path through intermediate structures)
+    if (state.animation.path.length > 2) {
+      const chain = state.animation.path
+        .map((key) => structures[key].label)
+        .join(' \u2192 ');
+      dom.stepDescription.textContent = `[${chain}] ${stepText}`;
     } else {
-      dom.stepDescription.textContent = 'Select two structures to see a bijection animation.';
+      dom.stepDescription.textContent = stepText;
     }
+  } else if (state.sourceKey === state.targetKey) {
+    // Identity case: same structure selected
+    dom.stepDescription.textContent = 'Same structure selected \u2014 no transformation needed.';
+  } else {
+    dom.stepDescription.textContent = 'Select two structures to see a bijection animation.';
   }
 }
 
@@ -292,6 +298,7 @@ function updatePlayPauseButton() {
 function resetAnimation() {
   if (engine) engine.pause();
   state.animation.steps = [];
+  state.animation.path = [];
   state.animation.currentStep = 0;
   state.animation.progress = 0.0;
 }
