@@ -31,7 +31,7 @@ Requirements for the presentation-ready release. Each maps to roadmap phases.
 
 ### Classical Bijections
 
-- [ ] **BIJC-01**: Parentheses to Dyck Paths bijection with step-by-step animation ('(' = up, ')' = down)
+- [x] **BIJC-01**: Parentheses to Dyck Paths bijection with step-by-step animation ('(' = up, ')' = down)
 - [ ] **BIJC-02**: Binary Trees to Triangulations bijection with step-by-step animation (triangles correspond to internal nodes)
 - [ ] **BIJC-03**: Parentheses to Binary Trees bijection with step-by-step animation (recursive nesting defines subtrees)
 - [ ] **BIJC-04**: Dyck Paths to Lattice Paths bijection with step-by-step animation (45 degree geometric rotation)
@@ -62,8 +62,8 @@ Requirements for the presentation-ready release. Each maps to roadmap phases.
 - [x] **UICT-03**: Instance navigator with previous/next buttons and "X of Y" indicator
 - [x] **UICT-04**: Step description text panel showing current bijection step explanation
 - [x] **UICT-05**: Side-by-side dual-panel layout with source structure left, target structure right
-- [ ] **UICT-06**: Color-coded element correspondence (matching elements share colors across both panels)
-- [ ] **UICT-07**: Active transformation step highlighting (current step pulses/glows, others dim)
+- [x] **UICT-06**: Color-coded element correspondence (matching elements share colors across both panels)
+- [x] **UICT-07**: Active transformation step highlighting (current step pulses/glows, others dim)
 - [ ] **UICT-08**: Keyboard shortcuts (spacebar play/pause, arrow keys step, number keys speed)
 
 ## v2 Requirements
@@ -110,7 +110,7 @@ Deferred to future release. Tracked but not in current roadmap.
 | STRC-10 | Phase 2 | Complete |
 | STRC-11 | Phase 4 | Pending |
 | STRC-12 | Phase 2 | Complete |
-| BIJC-01 | Phase 3 | Pending |
+| BIJC-01 | Phase 3 | Complete |
 | BIJC-02 | Phase 3 | Pending |
 | BIJC-03 | Phase 3 | Pending |
 | BIJC-04 | Phase 5 | Pending |
@@ -132,8 +132,8 @@ Deferred to future release. Tracked but not in current roadmap.
 | UICT-03 | Phase 2 | Complete |
 | UICT-04 | Phase 3 | Complete |
 | UICT-05 | Phase 2 | Complete |
-| UICT-06 | Phase 3 | Pending |
-| UICT-07 | Phase 3 | Pending |
+| UICT-06 | Phase 3 | Complete |
+| UICT-07 | Phase 3 | Complete |
 | UICT-08 | Phase 7 | Pending |
 
 **Coverage:**
