@@ -28,7 +28,13 @@ body {
 header h1 {
   font-size: 24px;
   color: #212121;
-  margin-bottom: 16px;
+  margin-bottom: 4px;
+}
+
+header .author {
+  font-size: 14px;
+  color: #616161;
+  margin: 0 0 16px 0;
 }
 
 #canvas-container {
