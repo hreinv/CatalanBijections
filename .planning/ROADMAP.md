@@ -160,8 +160,8 @@ Phase 8 (gap closure) depends only on Phase 3 and can run any time after Phase 3
 | 1. Core Foundation | 2/2 | Complete | 2026-02-24 |
 | 2. Vertical Slice | 3/3 | Complete | 2026-02-24 |
 | 3. First Bijections | 3/3 | Complete | 2026-02-23 |
-| 4. Remaining Structures | 0/3 | Not started | - |
-| 5. Remaining Bijections | 0/3 | Not started | - |
-| 6. Dyck Bridge | 1/2 | In Progress | - |
-| 7. Presentation Hardening | 0/1 | Not started | - |
+| 4. Remaining Structures | 3/3 | Complete | 2026-02-24 |
+| 5. Remaining Bijections | 3/3 | Complete | 2026-02-24 |
+| 6. Dyck Bridge | 2/2 | Complete | 2026-02-24 |
+| 7. Presentation Hardening | 1/1 | Complete | 2026-02-24 |
 | 8. Verify & Fix Integration Debt | 2/2 | Complete | 2026-02-24 |

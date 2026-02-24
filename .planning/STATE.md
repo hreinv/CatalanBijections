@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-23)
 
 **Core value:** Presenter can pick any two Catalan structures and walk the class through an animated, step-by-step visual bijection transformation.
-**Current focus:** Phase 6 - Dyck Bridge (Complete)
+**Current focus:** Phase 7 - Presentation Hardening (Complete)
 
 ## Current Position
 
-Phase: 6 of 8 (Dyck Bridge)
-Plan: 2 of 2 in current phase
+Phase: 7 of 8 (Presentation Hardening)
+Plan: 1 of 1 in current phase
 Status: Phase Complete
-Last activity: 2026-02-24 -- Completed 06-02 Bridge UI integration with chain indicator for all 110 structure pairs
+Last activity: 2026-02-24 -- Completed 07-01 Keyboard shortcuts, tab-switch resilience, Okabe-Ito palette
 
-Progress: [█████████░] 90%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
+- Total plans completed: 19
 - Average duration: 2.6min
-- Total execution time: 0.76 hours
+- Total execution time: 0.81 hours
 
 **By Phase:**
 
@@ -46,8 +46,10 @@ Progress: [█████████░] 90%
 | Phase 06 P01 | 3min | 2 tasks | 2 files |
 | Phase 06 P02 | 2min | 2 tasks | 1 files |
 
+| Phase 07 P01 | 3min | 3 tasks | 2 files |
+
 **Recent Trend:**
-- Last 5 plans: 4min, 3min, 3min, 3min, 2min
+- Last 5 plans: 3min, 3min, 3min, 2min, 3min
 - Trend: stable
 
 *Updated after each plan completion*
@@ -111,6 +113,10 @@ Recent decisions affecting current work:
 - [Phase 06]: 06-02: Chain indicator rendered as text prefix in step description panel (no new DOM elements) per RESEARCH.md recommendation
 - [Phase 06]: 06-02: Identity case shows 'Same structure selected' message, distinct from initial 'Select two structures' prompt
 - [Phase 06]: 06-02: Removed 'No bijection available' code path since bridge guarantees all 110 distinct pairs have steps
+- [Phase 07]: SPEED_PRESETS as module-scope constant mapping keys 1-5 to 0.5x/1.0x/1.5x/2.0x/3.0x
+- [Phase 07]: Form element guard checks tagName for SELECT/INPUT/TEXTAREA to avoid intercepting native form behavior
+- [Phase 07]: Tab-switch pauses only (no auto-resume) -- presenter explicitly resumes with spacebar
+- [Phase 07]: Okabe-Ito palette replaces ad-hoc colors for scientifically validated colorblind safety
 
 ### Pending Todos
 
@@ -124,5 +130,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 06-02-PLAN.md (Bridge UI integration with chain indicator)
+Stopped at: Completed 07-01-PLAN.md (Keyboard shortcuts, tab-switch resilience, Okabe-Ito palette)
 Resume file: None

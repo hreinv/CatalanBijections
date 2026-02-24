@@ -64,7 +64,7 @@ Requirements for the presentation-ready release. Each maps to roadmap phases.
 - [x] **UICT-05**: Side-by-side dual-panel layout with source structure left, target structure right
 - [x] **UICT-06**: Color-coded element correspondence (matching elements share colors across both panels)
 - [x] **UICT-07**: Active transformation step highlighting (current step pulses/glows, others dim)
-- [ ] **UICT-08**: Keyboard shortcuts (spacebar play/pause, arrow keys step, number keys speed)
+- [x] **UICT-08**: Keyboard shortcuts (spacebar play/pause, arrow keys step, number keys speed)
 
 ## v2 Requirements
 
@@ -134,7 +134,7 @@ Deferred to future release. Tracked but not in current roadmap.
 | UICT-05 | Phase 2 | Complete |
 | UICT-06 | Phase 3 | Complete |
 | UICT-07 | Phase 3 | Complete |
-| UICT-08 | Phase 7 | Pending |
+| UICT-08 | Phase 7 | Complete |
 
 **Coverage:**
 - v1 requirements: 41 total
