@@ -57,11 +57,11 @@ Requirements for the presentation-ready release. Each maps to roadmap phases.
 
 ### UI Controls
 
-- [ ] **UICT-01**: Structure A and Structure B dropdown selectors for choosing any two structures
-- [ ] **UICT-02**: n selector (1-4) to set the Catalan number index
-- [ ] **UICT-03**: Instance navigator with previous/next buttons and "X of Y" indicator
+- [x] **UICT-01**: Structure A and Structure B dropdown selectors for choosing any two structures
+- [x] **UICT-02**: n selector (1-4) to set the Catalan number index
+- [x] **UICT-03**: Instance navigator with previous/next buttons and "X of Y" indicator
 - [ ] **UICT-04**: Step description text panel showing current bijection step explanation
-- [ ] **UICT-05**: Side-by-side dual-panel layout with source structure left, target structure right
+- [x] **UICT-05**: Side-by-side dual-panel layout with source structure left, target structure right
 - [ ] **UICT-06**: Color-coded element correspondence (matching elements share colors across both panels)
 - [ ] **UICT-07**: Active transformation step highlighting (current step pulses/glows, others dim)
 - [ ] **UICT-08**: Keyboard shortcuts (spacebar play/pause, arrow keys step, number keys speed)
@@ -127,11 +127,11 @@ Deferred to future release. Tracked but not in current roadmap.
 | ANIM-04 | Phase 2 | Pending |
 | ANIM-05 | Phase 2 | Pending |
 | ANIM-06 | Phase 3 | Pending |
-| UICT-01 | Phase 2 | Pending |
-| UICT-02 | Phase 2 | Pending |
-| UICT-03 | Phase 2 | Pending |
+| UICT-01 | Phase 2 | Complete |
+| UICT-02 | Phase 2 | Complete |
+| UICT-03 | Phase 2 | Complete |
 | UICT-04 | Phase 3 | Pending |
-| UICT-05 | Phase 2 | Pending |
+| UICT-05 | Phase 2 | Complete |
 | UICT-06 | Phase 3 | Pending |
 | UICT-07 | Phase 3 | Pending |
 | UICT-08 | Phase 7 | Pending |
