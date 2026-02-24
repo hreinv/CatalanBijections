@@ -31,11 +31,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Dyck word enumeration generates exactly C(n) valid instances for each n=1 through n=4 (1, 2, 5, 14 respectively)
   3. Canvas renders sharp lines and text on a HiDPI display (no blurriness on Retina/4K screens)
   4. Visual theme uses white background with high-contrast colors and thick strokes readable from the back of a classroom
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md — Dyck word enumeration engine, validation, and color palette (TDD)
+- [ ] 01-02-PLAN.md — HTML/Canvas shell with HiDPI rendering and projector theme
 
 ### Phase 2: Vertical Slice
 **Goal**: Presenter can select two structures (from four available), choose n, cycle through instances, and control animation playback in a side-by-side layout
