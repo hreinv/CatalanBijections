@@ -137,8 +137,9 @@ export function findPath(source, target) {
 // =============================================================================
 
 /**
- * Generate a simple 3-step animation showing source and target structures
- * directly, without exposing intermediate Dyck word conversions.
+ * Generate progressive element-by-element animation steps for non-classical
+ * bijections. Shows source and target structures side-by-side with elements
+ * revealed one at a time, matching the visual style of classical bijections.
  *
  * The Dyck word conversion happens internally — the viewer only sees
  * the one-to-one correspondence between source and target.
@@ -146,52 +147,66 @@ export function findPath(source, target) {
  * @param {string} sourceKey - Source structure key
  * @param {string} targetKey - Target structure key
  * @param {number[]} dyckWord - Current Dyck word as +1/-1 array
+ * @param {number} n - Catalan order
  * @returns {Array<{description: string, drawFrame: Function}>}
  */
-export function directSteps(sourceKey, targetKey, dyckWord) {
+export function directSteps(sourceKey, targetKey, dyckWord, n) {
   const sourceLabel = structures[sourceKey].label;
   const targetLabel = structures[targetKey].label;
   const sourceModule = structures[sourceKey].module;
   const targetModule = structures[targetKey].module;
 
-  return [
-    // Step 1: Introduction — show source structure, target panel empty
-    {
-      description: `Start with ${sourceLabel}`,
-      drawFrame(ctx, _progress, opts) {
-        const { sourceBox, theme, colors } = opts;
-        const instance = sourceModule.fromDyck(dyckWord);
-        sourceModule.draw(ctx, instance, { ...sourceBox, theme, colors });
-      },
+  // Pre-compute instances
+  const srcInstance = sourceModule.fromDyck(dyckWord);
+  const tgtInstance = targetModule.fromDyck(dyckWord);
+
+  const srcCount = sourceModule.elementCount(srcInstance);
+  const tgtCount = targetModule.elementCount(tgtInstance);
+
+  const steps = [];
+
+  // Step 0: Introduction — both structures shown dimmed
+  steps.push({
+    description: `Start: ${sourceLabel} and ${targetLabel}`,
+    drawFrame(ctx, _progress, opts) {
+      const { sourceBox, targetBox, theme, colors } = opts;
+      sourceModule.drawProgressive(ctx, srcInstance, {
+        ...sourceBox, theme, colors, activeIndex: -1, progress: 0,
+      });
+      targetModule.drawProgressive(ctx, tgtInstance, {
+        ...targetBox, theme, colors, activeIndex: -1, progress: 0,
+      });
     },
-    // Step 2: Reveal — fade in the target alongside the source
-    {
-      description: `Mapping ${sourceLabel} to ${targetLabel}`,
+  });
+
+  // Steps 1..n: one per element correspondence
+  for (let k = 0; k < n; k++) {
+    const srcActive = Math.floor((k + 1) * srcCount / n) - 1;
+    const tgtActive = Math.floor((k + 1) * tgtCount / n) - 1;
+
+    steps.push({
+      description: `Element ${k + 1} of ${n}: mapping ${sourceLabel} to ${targetLabel}`,
       drawFrame(ctx, progress, opts) {
         const { sourceBox, targetBox, theme, colors } = opts;
-
-        const srcInstance = sourceModule.fromDyck(dyckWord);
-        sourceModule.draw(ctx, srcInstance, { ...sourceBox, theme, colors });
-
-        ctx.save();
-        ctx.globalAlpha = progress;
-        const tgtInstance = targetModule.fromDyck(dyckWord);
-        targetModule.draw(ctx, tgtInstance, { ...targetBox, theme, colors });
-        ctx.restore();
+        sourceModule.drawProgressive(ctx, srcInstance, {
+          ...sourceBox, theme, colors, activeIndex: srcActive, progress,
+        });
+        targetModule.drawProgressive(ctx, tgtInstance, {
+          ...targetBox, theme, colors, activeIndex: tgtActive, progress,
+        });
       },
-    },
-    // Step 3: Complete — both structures at full opacity
-    {
-      description: `Bijection complete: ${sourceLabel} corresponds to ${targetLabel}`,
-      drawFrame(ctx, _progress, opts) {
-        const { sourceBox, targetBox, theme, colors } = opts;
+    });
+  }
 
-        const srcInstance = sourceModule.fromDyck(dyckWord);
-        sourceModule.draw(ctx, srcInstance, { ...sourceBox, theme, colors });
-
-        const tgtInstance = targetModule.fromDyck(dyckWord);
-        targetModule.draw(ctx, tgtInstance, { ...targetBox, theme, colors });
-      },
+  // Step n+1: Completion — both structures fully colored
+  steps.push({
+    description: `Bijection complete: ${sourceLabel} corresponds to ${targetLabel}`,
+    drawFrame(ctx, _progress, opts) {
+      const { sourceBox, targetBox, theme, colors } = opts;
+      sourceModule.draw(ctx, srcInstance, { ...sourceBox, theme, colors });
+      targetModule.draw(ctx, tgtInstance, { ...targetBox, theme, colors });
     },
-  ];
+  });
+
+  return steps;
 }

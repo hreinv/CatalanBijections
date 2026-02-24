@@ -144,3 +144,128 @@ export function draw(ctx, instance, opts) {
     centerY - boxSize / 2 - 4
   );
 }
+
+/**
+ * Return the number of progressive elements (values/boxes) in the permutation.
+ *
+ * @param {{ perm: number[], n: number }} instance
+ * @returns {number}
+ */
+export function elementCount(instance) {
+  return instance.n;
+}
+
+/**
+ * Draw the stack-sortable permutation progressively, revealing boxes one at a time.
+ *
+ * - Label text always shows the full permutation.
+ * - Processed boxes (i < activeIndex): colored fill + border (same as draw()).
+ * - Active box (i === activeIndex): colored fill + border + pulsing glow.
+ * - Unprocessed boxes (i > activeIndex): faint border only, dimmed value text.
+ *
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {{ perm: number[], n: number }} instance
+ * @param {{ x: number, y: number, width: number, height: number, theme: Object, colors: string[], activeIndex: number, progress: number }} opts
+ */
+export function drawProgressive(ctx, instance, opts) {
+  const { x, y, width, height, theme, colors, activeIndex, progress } = opts;
+  const { perm, n } = instance;
+
+  if (!perm || perm.length === 0) return;
+
+  const monoFont = theme.monoFont || "'Consolas', 'Courier New', monospace";
+  const padding = 10;
+
+  const availWidth = width - padding * 2;
+  const availHeight = height - padding * 2;
+  const boxSize = Math.min(availWidth / n, availHeight * 0.6, 60);
+  const totalBoxWidth = boxSize * n;
+  const startX = x + (width - totalBoxWidth) / 2;
+  const centerY = y + height * 0.45;
+
+  const valueFontSize = Math.max(12, Math.floor(boxSize * 0.5));
+  const indexFontSize = Math.max(8, Math.floor(boxSize * 0.3));
+
+  const pulse = 0.5 + 0.5 * Math.sin(Date.now() * 0.008 * Math.PI);
+
+  // Draw label above (always full permutation)
+  ctx.save();
+  const labelFontSize = Math.max(10, Math.floor(boxSize * 0.25));
+  ctx.fillStyle = theme.strokeColor || '#1A1A1A';
+  ctx.font = `${labelFontSize}px ${monoFont}`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText(
+    'Stack-sortable: [' + perm.join(', ') + ']',
+    x + width / 2,
+    centerY - boxSize / 2 - 4
+  );
+  ctx.restore();
+
+  // Draw boxes with three-zone pattern
+  for (let i = 0; i < n; i++) {
+    const bx = startX + i * boxSize;
+    const by = centerY - boxSize / 2;
+
+    ctx.save();
+
+    if (i < activeIndex) {
+      // Processed: full opacity, colored fill + border
+      ctx.globalAlpha = 1.0;
+      ctx.fillStyle = colors[(perm[i] - 1) % colors.length] + '40';
+      ctx.fillRect(bx + 1, by + 1, boxSize - 2, boxSize - 2);
+
+      ctx.strokeStyle = colors[(perm[i] - 1) % colors.length];
+      ctx.lineWidth = 2;
+      ctx.strokeRect(bx + 1, by + 1, boxSize - 2, boxSize - 2);
+    } else if (i === activeIndex) {
+      // Active: full opacity, colored fill + border + pulsing glow
+      ctx.globalAlpha = 1.0;
+      const color = colors[(perm[i] - 1) % colors.length];
+      ctx.fillStyle = color + '40';
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 8 + pulse * 12;
+      ctx.fillRect(bx + 1, by + 1, boxSize - 2, boxSize - 2);
+
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.strokeRect(bx + 1, by + 1, boxSize - 2, boxSize - 2);
+    } else {
+      // Unprocessed: faint border only, no fill
+      ctx.globalAlpha = 0.25;
+      ctx.strokeStyle = theme.strokeColor || '#1A1A1A';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(bx + 1, by + 1, boxSize - 2, boxSize - 2);
+    }
+
+    ctx.restore();
+
+    // Draw value text
+    ctx.save();
+    if (i > activeIndex) {
+      // Dimmed text for unprocessed
+      ctx.globalAlpha = 0.25;
+      ctx.fillStyle = theme.strokeColor || '#1A1A1A';
+    } else {
+      ctx.globalAlpha = 1.0;
+      ctx.fillStyle = theme.strokeColor || '#1A1A1A';
+    }
+    ctx.font = `bold ${valueFontSize}px ${monoFont}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(String(perm[i]), bx + boxSize / 2, centerY);
+    ctx.restore();
+
+    // Draw position index below box
+    ctx.save();
+    if (i > activeIndex) {
+      ctx.globalAlpha = 0.25;
+    }
+    ctx.fillStyle = theme.strokeColor || '#999';
+    ctx.font = `${indexFontSize}px ${monoFont}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(String(i + 1), bx + boxSize / 2, centerY + boxSize / 2 + indexFontSize);
+    ctx.restore();
+  }
+}

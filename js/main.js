@@ -152,9 +152,13 @@ function updateStepDescription() {
 // --- Rendering ---
 
 /**
- * Render both structures side-by-side on the canvas.
- * Left panel: source structure. Right panel: target structure.
- * A thin vertical divider separates the panels.
+ * Render structures on the canvas.
+ *
+ * Layout modes:
+ * - 2-panel (classical bijections): Source | Target
+ * - 3-panel (composed via Dyck hub): Source | Dyck Path | Target
+ *
+ * Mode is determined by animation path length (3 = composed, else 2).
  */
 function render() {
   clearCanvas(ctx, canvasWidth, canvasHeight);
@@ -164,10 +168,26 @@ function render() {
 
   const padding = 20;
   const labelHeight = 30;
-  const panelWidth = (canvasWidth - padding * 3) / 2;
   const panelHeight = canvasHeight - padding * 2;
 
-  // --- Shared: panel labels and divider (both modes) ---
+  // Determine layout mode from animation path
+  const isComposed = state.animation.path.length > 2;
+
+  if (isComposed) {
+    renderThreePanel(padding, labelHeight, panelHeight);
+  } else {
+    renderTwoPanel(padding, labelHeight, panelHeight);
+  }
+}
+
+/**
+ * 2-panel layout for classical bijections and static mode.
+ * Source | Target with one divider.
+ */
+function renderTwoPanel(padding, labelHeight, panelHeight) {
+  const panelWidth = (canvasWidth - padding * 3) / 2;
+
+  // Labels
   const sourceLabel = structures[state.sourceKey].label;
   const targetLabel = structures[state.targetKey].label;
 
@@ -178,6 +198,7 @@ function render() {
   ctx.fillText(sourceLabel, padding + panelWidth / 2, padding);
   ctx.fillText(targetLabel, padding * 2 + panelWidth + panelWidth / 2, padding);
 
+  // Divider
   const dividerX = padding + panelWidth + padding / 2;
   ctx.strokeStyle = '#E0E0E0';
   ctx.lineWidth = 1;
@@ -186,7 +207,7 @@ function render() {
   ctx.lineTo(dividerX, canvasHeight - padding);
   ctx.stroke();
 
-  // --- Layout boxes for animation drawFrame ---
+  // Layout boxes
   const sourceBox = {
     x: padding,
     y: padding + labelHeight,
@@ -200,10 +221,9 @@ function render() {
     height: panelHeight - labelHeight,
   };
 
-  // --- Dual-mode: animation vs static ---
+  // Animation or static
   const currentStep = state.animation.steps[state.animation.currentStep];
   if (state.animation.steps.length > 0 && currentStep) {
-    // Animation mode: apply easing to raw linear progress, delegate to step drawFrame
     const easedProgress = easeInOutCubic(state.animation.progress);
     currentStep.drawFrame(ctx, easedProgress, {
       sourceBox,
@@ -231,6 +251,74 @@ function render() {
       theme,
       colors: CORRESPONDENCE_COLORS,
     });
+  }
+}
+
+/**
+ * 3-panel layout for composed bijections via Dyck hub.
+ * Source | Dyck Path | Target with two dividers.
+ */
+function renderThreePanel(padding, labelHeight, panelHeight) {
+  const panelWidth = (canvasWidth - padding * 4) / 3;
+
+  // Labels from path keys
+  const labels = state.animation.path.map((key) => structures[key].label);
+
+  ctx.fillStyle = theme.strokeColor;
+  ctx.font = `bold 14px ${theme.fontFamily}`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+
+  for (let i = 0; i < 3; i++) {
+    const panelX = padding * (i + 1) + panelWidth * i;
+    ctx.fillText(labels[i], panelX + panelWidth / 2, padding);
+  }
+
+  // Two dividers
+  ctx.strokeStyle = '#E0E0E0';
+  ctx.lineWidth = 1;
+  for (let i = 1; i <= 2; i++) {
+    const divX = padding * i + panelWidth * i + padding / 2;
+    ctx.beginPath();
+    ctx.moveTo(divX, padding);
+    ctx.lineTo(divX, canvasHeight - padding);
+    ctx.stroke();
+  }
+
+  // Layout boxes
+  const sourceBox = {
+    x: padding,
+    y: padding + labelHeight,
+    width: panelWidth,
+    height: panelHeight - labelHeight,
+  };
+  const middleBox = {
+    x: padding * 2 + panelWidth,
+    y: padding + labelHeight,
+    width: panelWidth,
+    height: panelHeight - labelHeight,
+  };
+  const targetBox = {
+    x: padding * 3 + panelWidth * 2,
+    y: padding + labelHeight,
+    width: panelWidth,
+    height: panelHeight - labelHeight,
+  };
+
+  // Animation (always present for composed bijections)
+  const currentStep = state.animation.steps[state.animation.currentStep];
+  if (currentStep) {
+    const easedProgress = easeInOutCubic(state.animation.progress);
+    currentStep.drawFrame(ctx, easedProgress, {
+      sourceBox,
+      middleBox,
+      targetBox,
+      theme,
+      colors: CORRESPONDENCE_COLORS,
+      currentStep: state.animation.currentStep,
+      totalSteps: state.animation.steps.length,
+    });
+    updateStepDescription();
   }
 }
 

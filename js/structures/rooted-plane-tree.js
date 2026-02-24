@@ -191,3 +191,143 @@ export function draw(ctx, instance, opts) {
     ctx.stroke();
   }
 }
+
+/**
+ * Return the number of nodes (n+1) in the rooted plane tree.
+ * @param {TreeNode} instance - Root node
+ * @returns {number}
+ */
+export function elementCount(instance) {
+  const nodes = [];
+  collectNodes(instance, nodes);
+  return nodes.length;
+}
+
+/**
+ * Draw a rooted plane tree progressively with three-zone highlighting.
+ * Edges are only drawn between revealed nodes. Nodes use three-zone pattern.
+ *
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {TreeNode} instance - Root node
+ * @param {{ x: number, y: number, width: number, height: number, theme: Object, colors: string[], activeIndex: number, progress: number }} opts
+ */
+export function drawProgressive(ctx, instance, opts) {
+  const { x, y, width, height, theme, colors, activeIndex, progress } = opts;
+
+  // Layout the tree
+  const totalTreeWidth = layoutPlaneTree(instance, 0, 0);
+
+  // Collect all nodes in pre-order
+  const allNodes = [];
+  collectNodes(instance, allNodes);
+
+  if (allNodes.length === 0) return;
+
+  // Compute max depth
+  let maxDepth = 0;
+  for (const node of allNodes) {
+    if (node.layoutY > maxDepth) maxDepth = node.layoutY;
+  }
+
+  // Scale layout coordinates to fit bounding box with padding
+  const nodeRadius = Math.max(6, Math.min(
+    width / (totalTreeWidth + 1) * 0.3,
+    height / (maxDepth + 2) * 0.3,
+    16
+  ));
+  const pad = nodeRadius + 6;
+  const drawWidth = width - pad * 2;
+  const drawHeight = height - pad * 2;
+
+  const xScale = totalTreeWidth > 1 ? drawWidth / totalTreeWidth : drawWidth;
+  const yScale = maxDepth > 0 ? drawHeight / maxDepth : 0;
+
+  function toCanvasX(lx) { return x + pad + lx * xScale; }
+  function toCanvasY(ly) { return y + pad + ly * yScale; }
+
+  // Build a map from node to pre-order index
+  const nodeIndexMap = new Map();
+  for (let i = 0; i < allNodes.length; i++) {
+    nodeIndexMap.set(allNodes[i], i);
+  }
+
+  const pulse = 0.5 + 0.5 * Math.sin(Date.now() * 0.008 * Math.PI);
+
+  // Draw edges only between revealed nodes (both parent and child index <= activeIndex)
+  function drawRevealedEdges(node) {
+    const parentIdx = nodeIndexMap.get(node);
+    const nx = toCanvasX(node.layoutX);
+    const ny = toCanvasY(node.layoutY);
+
+    for (const child of node.children) {
+      const childIdx = nodeIndexMap.get(child);
+      if (parentIdx <= activeIndex && childIdx <= activeIndex) {
+        ctx.save();
+        ctx.strokeStyle = theme.strokeColor || '#1A1A1A';
+        ctx.lineWidth = theme.strokeWidth || 3;
+        const childX = toCanvasX(child.layoutX);
+        const childY = toCanvasY(child.layoutY);
+        ctx.beginPath();
+        ctx.moveTo(nx, ny);
+        ctx.lineTo(childX, childY);
+        ctx.stroke();
+        ctx.restore();
+      }
+      drawRevealedEdges(child);
+    }
+  }
+
+  drawRevealedEdges(instance);
+
+  // Draw nodes with three-zone pattern
+  for (let i = 0; i < allNodes.length; i++) {
+    const node = allNodes[i];
+    const nx = toCanvasX(node.layoutX);
+    const ny = toCanvasY(node.layoutY);
+    const r = (i === 0) ? nodeRadius * 1.3 : nodeRadius;
+
+    ctx.save();
+
+    if (i < activeIndex) {
+      // Processed: filled circle + border
+      ctx.globalAlpha = 1.0;
+      ctx.fillStyle = colors[i % colors.length];
+      ctx.beginPath();
+      ctx.arc(nx, ny, r, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = theme.strokeColor || '#1A1A1A';
+      ctx.lineWidth = (i === 0) ? 3 : 2;
+      ctx.beginPath();
+      ctx.arc(nx, ny, r, 0, Math.PI * 2);
+      ctx.stroke();
+    } else if (i === activeIndex) {
+      // Active: filled circle + glow + border
+      ctx.globalAlpha = 1.0;
+      const color = colors[i % colors.length];
+      ctx.fillStyle = color;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 8 + pulse * 12;
+      ctx.beginPath();
+      ctx.arc(nx, ny, r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      ctx.strokeStyle = theme.strokeColor || '#1A1A1A';
+      ctx.lineWidth = (i === 0) ? 3 : 2;
+      ctx.beginPath();
+      ctx.arc(nx, ny, r, 0, Math.PI * 2);
+      ctx.stroke();
+    } else {
+      // Unprocessed: faint outline only
+      ctx.globalAlpha = 0.25;
+      ctx.strokeStyle = theme.strokeColor || '#1A1A1A';
+      ctx.lineWidth = (i === 0) ? 3 : 2;
+      ctx.beginPath();
+      ctx.arc(nx, ny, r, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+}

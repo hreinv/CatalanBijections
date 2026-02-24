@@ -254,3 +254,142 @@ export function draw(ctx, instance, opts) {
     ctx.fillText(String(i), lx, ly);
   }
 }
+
+/**
+ * Return the number of triangles in the triangulation.
+ * @param {{ n: number, diagonals: Array<{from: number, to: number}>, numVertices: number }} instance
+ * @returns {number}
+ */
+export function elementCount(instance) {
+  const triangles = [];
+  findTriangles(instance.diagonals, 0, instance.numVertices - 1, triangles);
+  return triangles.length;
+}
+
+/**
+ * Draw triangulation progressively with three-zone highlighting.
+ * Polygon outline and vertex labels are always visible.
+ * Triangles use three-zone: processed = fill + diagonals, active = fill + glow + diagonals,
+ * unprocessed = no fill, no diagonals.
+ *
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {{ n: number, diagonals: Array<{from: number, to: number}>, numVertices: number }} instance
+ * @param {{ x: number, y: number, width: number, height: number, theme: Object, colors: string[], activeIndex: number, progress: number }} opts
+ */
+export function drawProgressive(ctx, instance, opts) {
+  const { x, y, width, height, theme, colors, activeIndex, progress } = opts;
+  const { numVertices, diagonals } = instance;
+
+  if (numVertices < 3) return;
+
+  // Place vertices on a circle (same as draw)
+  const cx = x + width / 2;
+  const cy = y + height / 2;
+  const radius = Math.min(width, height) / 2 - 30;
+
+  const vertices = [];
+  for (let i = 0; i < numVertices; i++) {
+    const angle = -Math.PI / 2 + (2 * Math.PI * i) / numVertices;
+    vertices.push({
+      px: cx + radius * Math.cos(angle),
+      py: cy + radius * Math.sin(angle),
+    });
+  }
+
+  // Find triangles
+  const triangles = [];
+  findTriangles(diagonals, 0, numVertices - 1, triangles);
+
+  const pulse = 0.5 + 0.5 * Math.sin(Date.now() * 0.008 * Math.PI);
+
+  // Draw triangles with three-zone pattern
+  for (let i = 0; i < triangles.length; i++) {
+    const [v0, v1, v2] = triangles[i];
+    ctx.save();
+
+    if (i < activeIndex) {
+      // Processed: semi-transparent fill + diagonals
+      ctx.globalAlpha = 1.0;
+      ctx.fillStyle = colors[i % colors.length] + '40';
+      ctx.beginPath();
+      ctx.moveTo(vertices[v0].px, vertices[v0].py);
+      ctx.lineTo(vertices[v1].px, vertices[v1].py);
+      ctx.lineTo(vertices[v2].px, vertices[v2].py);
+      ctx.closePath();
+      ctx.fill();
+
+      // Draw diagonals for this triangle
+      _drawTriangleDiagonals(ctx, vertices, v0, v1, v2, theme);
+    } else if (i === activeIndex) {
+      // Active: fill + glow + diagonals
+      ctx.globalAlpha = 1.0;
+      const color = colors[i % colors.length];
+      ctx.fillStyle = color + '40';
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 8 + pulse * 12;
+      ctx.beginPath();
+      ctx.moveTo(vertices[v0].px, vertices[v0].py);
+      ctx.lineTo(vertices[v1].px, vertices[v1].py);
+      ctx.lineTo(vertices[v2].px, vertices[v2].py);
+      ctx.closePath();
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Draw diagonals for this triangle
+      _drawTriangleDiagonals(ctx, vertices, v0, v1, v2, theme);
+    }
+    // Unprocessed (i > activeIndex): no fill, no diagonals
+
+    ctx.restore();
+  }
+
+  // Draw polygon edges (always visible at full opacity)
+  ctx.strokeStyle = theme.strokeColor || '#1A1A1A';
+  ctx.lineWidth = theme.strokeWidth || 3;
+  ctx.beginPath();
+  ctx.moveTo(vertices[0].px, vertices[0].py);
+  for (let i = 1; i < numVertices; i++) {
+    ctx.lineTo(vertices[i].px, vertices[i].py);
+  }
+  ctx.closePath();
+  ctx.stroke();
+
+  // Draw vertex labels (always visible)
+  ctx.fillStyle = theme.strokeColor || '#1A1A1A';
+  const fontFamily = theme.fontFamily || 'sans-serif';
+  ctx.font = `14px ${fontFamily}`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  for (let i = 0; i < numVertices; i++) {
+    const angle = -Math.PI / 2 + (2 * Math.PI * i) / numVertices;
+    const lx = cx + (radius + 18) * Math.cos(angle);
+    const ly = cy + (radius + 18) * Math.sin(angle);
+    ctx.fillText(String(i), lx, ly);
+  }
+}
+
+/**
+ * Draw the diagonals (non-edge sides) of a single triangle.
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {Array} vertices
+ * @param {number} v0
+ * @param {number} v1
+ * @param {number} v2
+ * @param {Object} theme
+ */
+function _drawTriangleDiagonals(ctx, vertices, v0, v1, v2, theme) {
+  ctx.strokeStyle = theme.strokeColor || '#1A1A1A';
+  ctx.lineWidth = Math.max(1, (theme.strokeWidth || 3) - 1);
+  ctx.setLineDash([6, 4]);
+
+  const pairs = [[v0, v1], [v1, v2], [v0, v2]];
+  for (const [a, b] of pairs) {
+    if (Math.abs(a - b) > 1) {
+      ctx.beginPath();
+      ctx.moveTo(vertices[a].px, vertices[a].py);
+      ctx.lineTo(vertices[b].px, vertices[b].py);
+      ctx.stroke();
+    }
+  }
+  ctx.setLineDash([]);
+}

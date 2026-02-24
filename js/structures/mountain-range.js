@@ -120,3 +120,162 @@ export function draw(ctx, instance, opts) {
     }
   }
 }
+
+/**
+ * Return the number of progressive elements (segments) in the mountain range.
+ * Each segment connects consecutive points, so there are points.length - 1 segments (= 2n).
+ *
+ * @param {{ points: Array<{x: number, y: number}> }} instance
+ * @returns {number}
+ */
+export function elementCount(instance) {
+  return instance.points.length - 1;
+}
+
+/**
+ * Draw the mountain range progressively, revealing segments one at a time.
+ *
+ * - Baseline always drawn.
+ * - Processed segments (i < activeIndex): full color fill area, full outline.
+ * - Active segment (i === activeIndex): extends with progress, pulsing glow.
+ * - Unprocessed segments: nothing drawn.
+ * - Peak dots revealed only when both adjacent segments have been drawn.
+ *
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {{ points: Array<{x: number, y: number}> }} instance
+ * @param {{ x: number, y: number, width: number, height: number, theme: Object, colors: string[], activeIndex: number, progress: number }} opts
+ */
+export function drawProgressive(ctx, instance, opts) {
+  const { x, y, width, height, theme, colors, activeIndex, progress } = opts;
+  const { points } = instance;
+
+  if (points.length <= 1) return;
+
+  const n = (points.length - 1) / 2;
+  const padding = 20;
+  const drawWidth = width - padding * 2;
+  const drawHeight = height - padding * 2;
+
+  const scaleX = drawWidth / (2 * n);
+  const scaleY = drawHeight / n;
+
+  function toCanvasX(gx) { return x + padding + gx * scaleX; }
+  function toCanvasY(gy) { return y + padding + (n - gy) * scaleY; }
+
+  const baseY = toCanvasY(0);
+  const startX = toCanvasX(points[0].x);
+  const endX = toCanvasX(points[points.length - 1].x);
+
+  const pulse = 0.5 + 0.5 * Math.sin(Date.now() * 0.008 * Math.PI);
+
+  // Always draw baseline
+  ctx.save();
+  ctx.strokeStyle = theme.strokeColor || '#1A1A1A';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(startX, baseY);
+  ctx.lineTo(endX, baseY);
+  ctx.stroke();
+  ctx.restore();
+
+  // Determine how many segments are fully visible
+  const totalSegments = points.length - 1;
+  // Last fully-drawn point index = activeIndex (segment activeIndex goes from point activeIndex to activeIndex+1)
+  // Segments 0..activeIndex-1 are processed; segment activeIndex is active (partially drawn).
+
+  // Build the revealed path points (up to and including the active segment with progress)
+  if (activeIndex < 0) return; // all dimmed, nothing to draw beyond baseline
+
+  const revealedPoints = [points[0]];
+  for (let i = 0; i < totalSegments; i++) {
+    if (i < activeIndex) {
+      // Fully revealed
+      revealedPoints.push(points[i + 1]);
+    } else if (i === activeIndex) {
+      // Partially revealed based on progress
+      const p0 = points[i];
+      const p1 = points[i + 1];
+      const interpX = p0.x + (p1.x - p0.x) * progress;
+      const interpY = p0.y + (p1.y - p0.y) * progress;
+      revealedPoints.push({ x: interpX, y: interpY });
+      break;
+    } else {
+      break;
+    }
+  }
+
+  // Fill area under revealed path
+  if (revealedPoints.length > 1) {
+    ctx.save();
+    ctx.fillStyle = colors[0] + '30';
+    ctx.beginPath();
+    ctx.moveTo(toCanvasX(revealedPoints[0].x), toCanvasY(revealedPoints[0].y));
+    for (let i = 1; i < revealedPoints.length; i++) {
+      ctx.lineTo(toCanvasX(revealedPoints[i].x), toCanvasY(revealedPoints[i].y));
+    }
+    const lastRevealed = revealedPoints[revealedPoints.length - 1];
+    ctx.lineTo(toCanvasX(lastRevealed.x), baseY);
+    ctx.lineTo(startX, baseY);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Draw outline segments with three-zone coloring
+  for (let i = 0; i < totalSegments; i++) {
+    if (i > activeIndex) break; // unprocessed: nothing drawn
+
+    ctx.save();
+    const color = colors[i % colors.length];
+
+    if (i < activeIndex) {
+      // Processed: full opacity, correspondence color, no glow
+      ctx.globalAlpha = 1.0;
+      ctx.strokeStyle = color;
+    } else if (i === activeIndex) {
+      // Active: full opacity, correspondence color, pulsing glow
+      ctx.globalAlpha = 1.0;
+      ctx.strokeStyle = color;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 8 + pulse * 12;
+    }
+
+    ctx.lineWidth = theme.strokeWidth || 3;
+    ctx.beginPath();
+    ctx.moveTo(toCanvasX(points[i].x), toCanvasY(points[i].y));
+
+    if (i < activeIndex) {
+      ctx.lineTo(toCanvasX(points[i + 1].x), toCanvasY(points[i + 1].y));
+    } else {
+      // Active segment: interpolate with progress
+      const p0 = points[i];
+      const p1 = points[i + 1];
+      const interpX = p0.x + (p1.x - p0.x) * progress;
+      const interpY = p0.y + (p1.y - p0.y) * progress;
+      ctx.lineTo(toCanvasX(interpX), toCanvasY(interpY));
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // Draw peak dots -- a peak at point index i is revealed only when both
+  // segments i-1 and i are fully drawn (i.e. both < activeIndex, meaning activeIndex > i)
+  const peakRadius = Math.max(5, Math.min(scaleX, scaleY) * 0.25);
+  let colorIdx = 0;
+  for (let i = 1; i < points.length - 1; i++) {
+    if (points[i].y > points[i - 1].y && points[i].y > points[i + 1].y) {
+      // Peak at point i. Adjacent segments are i-1 and i.
+      // Both must be fully processed: activeIndex > i (i.e. segment i is processed)
+      if (activeIndex > i) {
+        ctx.save();
+        ctx.globalAlpha = 1.0;
+        ctx.fillStyle = colors[colorIdx % colors.length];
+        ctx.beginPath();
+        ctx.arc(toCanvasX(points[i].x), toCanvasY(points[i].y), peakRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+      colorIdx++;
+    }
+  }
+}

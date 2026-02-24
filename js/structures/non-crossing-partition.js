@@ -196,3 +196,153 @@ export function draw(ctx, instance, opts) {
     ctx.fillText(String(i + 1), lx, ly);
   }
 }
+
+/**
+ * Return the number of points in the partition.
+ * @param {{ n: number, partition: Array<Array<number>>, dyckWord: number[] }} instance
+ * @returns {number}
+ */
+export function elementCount(instance) {
+  return instance.n;
+}
+
+/**
+ * Draw non-crossing partition progressively with three-zone highlighting.
+ * Circle layout and labels are always visible. Points use three-zone pattern.
+ * Chords are only drawn when BOTH endpoints have been revealed.
+ * Each point uses its block's color.
+ *
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {{ n: number, partition: Array<Array<number>>, dyckWord: number[] }} instance
+ * @param {{ x: number, y: number, width: number, height: number, theme: Object, colors: string[], activeIndex: number, progress: number }} opts
+ */
+export function drawProgressive(ctx, instance, opts) {
+  const { x, y, width, height, theme, colors, activeIndex, progress } = opts;
+  const { n, partition } = instance;
+
+  if (n === 0) return;
+
+  const cx = x + width / 2;
+  const cy = y + height / 2;
+  const radius = Math.min(width, height) / 2 - 30;
+  const pointRadius = 6;
+  const fontFamily = theme.fontFamily || 'sans-serif';
+
+  // Place n points evenly around the circle (same as draw)
+  const points = [];
+  for (let i = 0; i < n; i++) {
+    const angle = -Math.PI / 2 + (2 * Math.PI * i) / n;
+    points.push({
+      px: cx + radius * Math.cos(angle),
+      py: cy + radius * Math.sin(angle),
+      angle,
+    });
+  }
+
+  // Build a map: point index (0-based) -> block index for coloring
+  const pointBlockMap = new Array(n).fill(0);
+  for (let bIdx = 0; bIdx < partition.length; bIdx++) {
+    for (const elem of partition[bIdx]) {
+      pointBlockMap[elem - 1] = bIdx; // elem is 1-indexed
+    }
+  }
+
+  const pulse = 0.5 + 0.5 * Math.sin(Date.now() * 0.008 * Math.PI);
+
+  // Draw chords: only when BOTH endpoints have been revealed
+  // Point i (0-based) is revealed when i <= activeIndex
+  for (let bIdx = 0; bIdx < partition.length; bIdx++) {
+    const block = partition[bIdx];
+    const color = colors[bIdx % colors.length];
+
+    if (block.length >= 2) {
+      for (let j = 0; j < block.length; j++) {
+        for (let k = j + 1; k < block.length; k++) {
+          const pi = block[j] - 1; // 0-indexed
+          const pk = block[k] - 1;
+
+          // Only draw if both endpoints are revealed
+          if (pi <= activeIndex && pk <= activeIndex) {
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.globalAlpha = 1.0;
+
+            const p1 = points[pi];
+            const p2 = points[pk];
+            const midX = (p1.px + p2.px) / 2;
+            const midY = (p1.py + p2.py) / 2;
+            const controlX = midX + (cx - midX) * 0.3;
+            const controlY = midY + (cy - midY) * 0.3;
+
+            ctx.beginPath();
+            ctx.moveTo(p1.px, p1.py);
+            ctx.quadraticCurveTo(controlX, controlY, p2.px, p2.py);
+            ctx.stroke();
+            ctx.restore();
+          }
+        }
+      }
+    }
+  }
+
+  // Draw points with three-zone pattern
+  for (let i = 0; i < n; i++) {
+    const blockIdx = pointBlockMap[i];
+    ctx.save();
+
+    if (i < activeIndex) {
+      // Processed: filled colored circle + outline
+      ctx.globalAlpha = 1.0;
+      ctx.fillStyle = colors[blockIdx % colors.length];
+      ctx.beginPath();
+      ctx.arc(points[i].px, points[i].py, pointRadius, 0, 2 * Math.PI);
+      ctx.fill();
+
+      ctx.strokeStyle = theme.strokeColor || '#1A1A1A';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(points[i].px, points[i].py, pointRadius, 0, 2 * Math.PI);
+      ctx.stroke();
+    } else if (i === activeIndex) {
+      // Active: filled circle + glow
+      ctx.globalAlpha = 1.0;
+      const color = colors[blockIdx % colors.length];
+      ctx.fillStyle = color;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 8 + pulse * 12;
+      ctx.beginPath();
+      ctx.arc(points[i].px, points[i].py, pointRadius, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      ctx.strokeStyle = theme.strokeColor || '#1A1A1A';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(points[i].px, points[i].py, pointRadius, 0, 2 * Math.PI);
+      ctx.stroke();
+    } else {
+      // Unprocessed: faint outline only
+      ctx.globalAlpha = 0.25;
+      ctx.strokeStyle = theme.strokeColor || '#1A1A1A';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(points[i].px, points[i].py, pointRadius, 0, 2 * Math.PI);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
+  // Draw labels (always visible)
+  ctx.fillStyle = theme.strokeColor || '#1A1A1A';
+  ctx.font = `14px ${fontFamily}`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  for (let i = 0; i < n; i++) {
+    const angle = points[i].angle;
+    const lx = cx + (radius + 18) * Math.cos(angle);
+    const ly = cy + (radius + 18) * Math.sin(angle);
+    ctx.fillText(String(i + 1), lx, ly);
+  }
+}

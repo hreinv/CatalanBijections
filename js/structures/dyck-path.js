@@ -115,3 +115,144 @@ export function draw(ctx, instance, opts) {
     ctx.fill();
   }
 }
+
+/**
+ * Return the number of animatable elements (2n segments).
+ * @param {{ points: Array<{x: number, y: number}> }} instance
+ * @returns {number}
+ */
+export function elementCount(instance) {
+  return instance.points.length - 1;
+}
+
+/**
+ * Draw the Dyck path with three-zone progressive coloring.
+ * Grid is always visible. Segments are drawn only up to activeIndex.
+ * The active segment animates from start to end using progress.
+ *
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {{ points: Array<{x: number, y: number}> }} instance
+ * @param {{ x: number, y: number, width: number, height: number, theme: Object, colors: string[], activeIndex: number, progress: number }} opts
+ */
+export function drawProgressive(ctx, instance, opts) {
+  const { x, y, width, height, theme, colors, activeIndex, progress } = opts;
+  const { points } = instance;
+
+  if (points.length <= 1) return;
+
+  const n = (points.length - 1) / 2;
+  const padding = 20;
+  const drawWidth = width - padding * 2;
+  const drawHeight = height - padding * 2;
+
+  const scaleX = drawWidth / (2 * n);
+  const scaleY = drawHeight / n;
+
+  function toCanvasX(gx) { return x + padding + gx * scaleX; }
+  function toCanvasY(gy) { return y + padding + (n - gy) * scaleY; }
+
+  // --- Always draw grid ---
+  ctx.strokeStyle = theme.gridLine || '#E0E0E0';
+  ctx.lineWidth = 1;
+  for (let gx = 0; gx <= 2 * n; gx++) {
+    ctx.beginPath();
+    ctx.moveTo(toCanvasX(gx), toCanvasY(n));
+    ctx.lineTo(toCanvasX(gx), toCanvasY(0));
+    ctx.stroke();
+  }
+  for (let gy = 0; gy <= n; gy++) {
+    ctx.beginPath();
+    ctx.moveTo(toCanvasX(0), toCanvasY(gy));
+    ctx.lineTo(toCanvasX(2 * n), toCanvasY(gy));
+    ctx.stroke();
+  }
+
+  // Emphasize x-axis
+  ctx.strokeStyle = theme.gridLine || '#E0E0E0';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(toCanvasX(0), toCanvasY(0));
+  ctx.lineTo(toCanvasX(2 * n), toCanvasY(0));
+  ctx.stroke();
+
+  // --- Draw segments with three-zone pattern ---
+  const segCount = points.length - 1;
+  const strokeWidth = theme.strokeWidth || 3;
+  const circleRadius = Math.max(4, Math.min(scaleX, scaleY) * 0.15);
+  const pulse = 0.5 + 0.5 * Math.sin(Date.now() * 0.008 * Math.PI);
+
+  for (let i = 0; i < segCount; i++) {
+    if (i > activeIndex) break; // Unprocessed: not drawn
+
+    const p0 = points[i];
+    const p1 = points[i + 1];
+    const x0 = toCanvasX(p0.x);
+    const y0 = toCanvasY(p0.y);
+    const x1 = toCanvasX(p1.x);
+    const y1 = toCanvasY(p1.y);
+
+    ctx.save();
+
+    if (i < activeIndex) {
+      // Processed: full opacity, correspondence color, no glow
+      ctx.globalAlpha = 1.0;
+      ctx.strokeStyle = colors[i % colors.length];
+      ctx.lineWidth = strokeWidth;
+      ctx.beginPath();
+      ctx.moveTo(x0, y0);
+      ctx.lineTo(x1, y1);
+      ctx.stroke();
+
+      // Vertex circle at segment start
+      ctx.fillStyle = colors[i % colors.length];
+      ctx.beginPath();
+      ctx.arc(x0, y0, circleRadius, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (i === activeIndex) {
+      // Active: animate from start to end using progress, with glow
+      const color = colors[i % colors.length];
+      const endX = x0 + (x1 - x0) * progress;
+      const endY = y0 + (y1 - y0) * progress;
+
+      ctx.globalAlpha = 1.0;
+      ctx.strokeStyle = color;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 8 + pulse * 12;
+      ctx.lineWidth = strokeWidth;
+      ctx.beginPath();
+      ctx.moveTo(x0, y0);
+      ctx.lineTo(endX, endY);
+      ctx.stroke();
+
+      // Vertex circle at segment start (no glow)
+      ctx.shadowBlur = 0;
+      ctx.shadowColor = 'transparent';
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x0, y0, circleRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Vertex circle at animated end
+      if (progress > 0.1) {
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 4 + pulse * 8;
+        ctx.beginPath();
+        ctx.arc(endX, endY, circleRadius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    ctx.restore();
+  }
+
+  // Draw the starting vertex (0,0) if active
+  if (activeIndex >= 0) {
+    ctx.save();
+    ctx.globalAlpha = 1.0;
+    ctx.fillStyle = colors[0 % colors.length];
+    ctx.beginPath();
+    ctx.arc(toCanvasX(0), toCanvasY(0), circleRadius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}

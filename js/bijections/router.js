@@ -21,7 +21,8 @@ import * as dyckMountain from './dyck-mountain.js';
 import * as dyckLattice from './dyck-lattice.js';
 import * as binaryPlaneTree from './binary-plane-tree.js';
 import * as ncpTriang from './ncp-triang.js';
-import { findPath, directSteps } from './bridge.js';
+import { directSteps } from './bridge.js';
+import { structures } from '../structures/registry.js';
 
 /** @type {Object.<string, { module: Object, reversed: boolean }>} */
 const registry = {};
@@ -91,13 +92,149 @@ export function getSteps(sourceKey, targetKey, dyckWord, n) {
     };
   }
 
-  // No classical entry: confirm connectivity, then show direct correspondence
-  const pathResult = findPath(sourceKey, targetKey);
+  // No classical entry: compose through Dyck path hub
+  return composeViaDyck(sourceKey, targetKey, dyckWord, n);
+}
 
-  if (!pathResult || pathResult.edges.length === 0) return null;
+// =============================================================================
+// Dyck Path Hub Composition
+// =============================================================================
 
+/**
+ * Compose a 2-phase animation through the Dyck path as a universal intermediate.
+ *
+ * Phase 1: Source → Dyck Path (classical module if registered, else directSteps)
+ * Phase 2: Dyck Path → Target (same logic)
+ *
+ * When both phases are present (neither endpoint is dyck-path), returns a
+ * 3-element path triggering 3-panel layout in the UI. Each step's drawFrame
+ * is wrapped to remap sourceBox/targetBox onto the correct panel and draw
+ * the "inactive" panel (dimmed target during Phase 1, completed source
+ * during Phase 2).
+ *
+ * @param {string} sourceKey
+ * @param {string} targetKey
+ * @param {number[]} dyckWord
+ * @param {number} n
+ * @returns {{ steps: Array, path: string[] }}
+ */
+function composeViaDyck(sourceKey, targetKey, dyckWord, n) {
+  const steps = [];
+
+  // Pre-compute instances for wrapper draws
+  const srcModule = structures[sourceKey].module;
+  const tgtModule = structures[targetKey].module;
+  const srcInstance = srcModule.fromDyck(dyckWord);
+  const tgtInstance = tgtModule.fromDyck(dyckWord);
+
+  // Determine if this is a 3-panel composition (both phases present)
+  const isThreePanel = sourceKey !== 'dyck-path' && targetKey !== 'dyck-path';
+
+  // --- Phase 1: Source → Dyck Path ---
+  if (sourceKey !== 'dyck-path') {
+    const srcDyckKey = `${sourceKey}|dyck-path`;
+    const srcDyckEntry = registry[srcDyckKey];
+
+    let phase1Steps;
+
+    if (srcDyckEntry) {
+      phase1Steps = srcDyckEntry.module.getSteps(dyckWord, n, srcDyckEntry.reversed);
+    } else {
+      phase1Steps = directSteps(sourceKey, 'dyck-path', dyckWord, n);
+    }
+
+    // Wrap steps: remap boxes for 3-panel, or add labels for 2-panel
+    for (const step of phase1Steps) {
+      if (isThreePanel) {
+        steps.push(wrapPhase1Step(step, tgtModule, tgtInstance));
+      } else {
+        steps.push({ ...step });
+      }
+    }
+  }
+
+  // --- Phase 2: Dyck Path → Target ---
+  if (targetKey !== 'dyck-path') {
+    const dyckTgtKey = `dyck-path|${targetKey}`;
+    const dyckTgtEntry = registry[dyckTgtKey];
+
+    let phase2Steps;
+
+    if (dyckTgtEntry) {
+      phase2Steps = dyckTgtEntry.module.getSteps(dyckWord, n, dyckTgtEntry.reversed);
+    } else {
+      phase2Steps = directSteps('dyck-path', targetKey, dyckWord, n);
+    }
+
+    // Wrap steps: remap boxes for 3-panel, or add labels for 2-panel
+    for (const step of phase2Steps) {
+      if (isThreePanel) {
+        steps.push(wrapPhase2Step(step, srcModule, srcInstance));
+      } else {
+        steps.push({ ...step });
+      }
+    }
+  }
+
+  // Build path: only include endpoints that aren't dyck-path
+  const path = [];
+  if (sourceKey !== 'dyck-path') path.push(sourceKey);
+  path.push('dyck-path');
+  if (targetKey !== 'dyck-path') path.push(targetKey);
+
+  return { steps, path };
+}
+
+// =============================================================================
+// 3-Panel Step Wrappers
+// =============================================================================
+
+/**
+ * Wrap a Phase 1 step for 3-panel layout.
+ * - Remaps: sourceBox stays, targetBox → middleBox (Dyck draws on center)
+ * - Draws: dimmed target skeleton on targetBox
+ */
+function wrapPhase1Step(step, tgtModule, tgtInstance) {
   return {
-    steps: directSteps(sourceKey, targetKey, dyckWord),
-    path: [sourceKey, targetKey],
+    description: step.description,
+    drawFrame(ctx, progress, opts) {
+      const { sourceBox, middleBox, targetBox, theme, colors } = opts;
+
+      // Phase 1 animation: source on left, Dyck on center
+      step.drawFrame(ctx, progress, {
+        ...opts,
+        sourceBox,
+        targetBox: middleBox,
+      });
+
+      // Dimmed target skeleton on right panel
+      tgtModule.drawProgressive(ctx, tgtInstance, {
+        ...targetBox, theme, colors, activeIndex: -1, progress: 0,
+      });
+    },
+  };
+}
+
+/**
+ * Wrap a Phase 2 step for 3-panel layout.
+ * - Remaps: sourceBox → middleBox (Dyck draws on center), targetBox stays
+ * - Draws: completed source on sourceBox
+ */
+function wrapPhase2Step(step, srcModule, srcInstance) {
+  return {
+    description: step.description,
+    drawFrame(ctx, progress, opts) {
+      const { sourceBox, middleBox, targetBox, theme, colors } = opts;
+
+      // Completed source on left panel
+      srcModule.draw(ctx, srcInstance, { ...sourceBox, theme, colors });
+
+      // Phase 2 animation: Dyck on center, target on right
+      step.drawFrame(ctx, progress, {
+        ...opts,
+        sourceBox: middleBox,
+        targetBox,
+      });
+    },
   };
 }

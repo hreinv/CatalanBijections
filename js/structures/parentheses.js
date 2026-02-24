@@ -62,3 +62,67 @@ export function draw(ctx, instance, opts) {
     ctx.fillText(instance[i], startX + i * charWidth, centerY);
   }
 }
+
+/**
+ * Return the number of animatable elements (2n characters).
+ * @param {string} instance - Balanced parenthesis string
+ * @returns {number}
+ */
+export function elementCount(instance) {
+  return instance.length;
+}
+
+/**
+ * Draw the parenthesis string with three-zone progressive coloring.
+ *
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {string} instance - Balanced parenthesis string
+ * @param {{ x: number, y: number, width: number, height: number, theme: Object, colors: string[], activeIndex: number, progress: number }} opts
+ */
+export function drawProgressive(ctx, instance, opts) {
+  const { x, y, width, height, theme, colors, activeIndex } = opts;
+
+  if (!instance || instance.length === 0) return;
+
+  const charCount = instance.length;
+  const monoFont = theme.monoFont || "'Consolas', 'Courier New', monospace";
+
+  const maxFontByWidth = Math.floor(width / (charCount * 0.6));
+  const maxFontByHeight = Math.floor(height * 0.6);
+  const fontSize = Math.min(maxFontByWidth, maxFontByHeight, 48);
+
+  ctx.font = `bold ${fontSize}px ${monoFont}`;
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'left';
+
+  const charWidth = ctx.measureText('(').width;
+  const totalWidth = charWidth * charCount;
+  const startX = x + (width - totalWidth) / 2;
+  const centerY = y + height / 2;
+
+  const pulse = 0.5 + 0.5 * Math.sin(Date.now() * 0.008 * Math.PI);
+
+  for (let i = 0; i < charCount; i++) {
+    ctx.save();
+
+    if (i < activeIndex) {
+      // Processed: full opacity, correspondence color, no glow
+      ctx.globalAlpha = 1.0;
+      ctx.fillStyle = colors[i % colors.length];
+    } else if (i === activeIndex) {
+      // Active: full opacity, correspondence color, pulsing glow
+      ctx.globalAlpha = 1.0;
+      const color = colors[i % colors.length];
+      ctx.fillStyle = color;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 8 + pulse * 12;
+    } else {
+      // Not yet processed: dimmed
+      ctx.globalAlpha = 0.25;
+      ctx.fillStyle = theme.strokeColor || '#1A1A1A';
+    }
+
+    ctx.fillText(instance[i], startX + i * charWidth, centerY);
+    ctx.restore();
+  }
+}

@@ -129,3 +129,134 @@ export function draw(ctx, instance, opts) {
   ctx.lineTo(toCanvasX(gridCols), toCanvasY(0));
   ctx.stroke();
 }
+
+/**
+ * Return the number of progressive elements (columns) in the staircase polygon.
+ *
+ * @param {{ n: number, columns: Array<{x: number, height: number}>, dyckWord: number[] }} instance
+ * @returns {number}
+ */
+export function elementCount(instance) {
+  return instance.columns.length;
+}
+
+/**
+ * Draw the staircase polygon progressively, revealing columns one at a time.
+ *
+ * - Grid always visible.
+ * - Baseline always visible.
+ * - Processed columns (i < activeIndex): semi-transparent color fill (+ '40').
+ * - Active column (i === activeIndex): color fill with pulsing glow.
+ * - Unprocessed columns: no fill.
+ * - Staircase outline drawn only up to active column.
+ *
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {{ n: number, columns: Array<{x: number, height: number}>, dyckWord: number[] }} instance
+ * @param {{ x: number, y: number, width: number, height: number, theme: Object, colors: string[], activeIndex: number, progress: number }} opts
+ */
+export function drawProgressive(ctx, instance, opts) {
+  const { x, y, width, height, theme, colors, activeIndex, progress } = opts;
+  const { n, columns } = instance;
+
+  if (columns.length === 0) return;
+
+  const padding = 20;
+  const drawWidth = width - padding * 2;
+  const drawHeight = height - padding * 2;
+
+  const gridCols = 2 * n;
+  const gridRows = n;
+
+  const cellW = drawWidth / gridCols;
+  const cellH = drawHeight / gridRows;
+
+  function toCanvasX(gx) { return x + padding + gx * cellW; }
+  function toCanvasY(gy) { return y + padding + (gridRows - gy) * cellH; }
+
+  const pulse = 0.5 + 0.5 * Math.sin(Date.now() * 0.008 * Math.PI);
+
+  // Always draw grid lines
+  ctx.save();
+  ctx.strokeStyle = theme.gridLine || '#E0E0E0';
+  ctx.lineWidth = 1;
+  for (let gx = 0; gx <= gridCols; gx++) {
+    ctx.beginPath();
+    ctx.moveTo(toCanvasX(gx), toCanvasY(0));
+    ctx.lineTo(toCanvasX(gx), toCanvasY(gridRows));
+    ctx.stroke();
+  }
+  for (let gy = 0; gy <= gridRows; gy++) {
+    ctx.beginPath();
+    ctx.moveTo(toCanvasX(0), toCanvasY(gy));
+    ctx.lineTo(toCanvasX(gridCols), toCanvasY(gy));
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // Always draw baseline
+  ctx.save();
+  ctx.strokeStyle = theme.strokeColor || '#1A1A1A';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(toCanvasX(0), toCanvasY(0));
+  ctx.lineTo(toCanvasX(gridCols), toCanvasY(0));
+  ctx.stroke();
+  ctx.restore();
+
+  // Fill columns with three-zone pattern
+  for (let i = 0; i < columns.length; i++) {
+    const col = columns[i];
+    if (col.height <= 0) continue;
+
+    ctx.save();
+
+    if (i < activeIndex) {
+      // Processed: full opacity, semi-transparent color fill
+      ctx.globalAlpha = 1.0;
+      ctx.fillStyle = colors[i % colors.length] + '40';
+    } else if (i === activeIndex) {
+      // Active: full opacity, color fill with pulsing glow
+      ctx.globalAlpha = 1.0;
+      const color = colors[i % colors.length];
+      ctx.fillStyle = color + '40';
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 8 + pulse * 12;
+    } else {
+      // Unprocessed: no fill
+      ctx.restore();
+      continue;
+    }
+
+    ctx.fillRect(
+      toCanvasX(col.x),
+      toCanvasY(col.height),
+      cellW,
+      col.height * cellH
+    );
+    ctx.restore();
+  }
+
+  // Draw staircase outline only up to active column
+  if (activeIndex >= 0) {
+    const lastOutlineIdx = Math.min(activeIndex, columns.length - 1);
+    ctx.save();
+    ctx.strokeStyle = theme.strokeColor || '#1A1A1A';
+    ctx.lineWidth = theme.strokeWidth || 3;
+    ctx.beginPath();
+
+    const firstH = columns[0].height;
+    ctx.moveTo(toCanvasX(0), toCanvasY(firstH));
+
+    for (let i = 0; i <= lastOutlineIdx; i++) {
+      const col = columns[i];
+      // Horizontal line across this column at its height
+      ctx.lineTo(toCanvasX(col.x + 1), toCanvasY(col.height));
+      // Vertical line to next column's height (if there is a next column within range)
+      if (i < lastOutlineIdx) {
+        ctx.lineTo(toCanvasX(col.x + 1), toCanvasY(columns[i + 1].height));
+      }
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+}
