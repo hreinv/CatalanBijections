@@ -42,3 +42,65 @@ header h1 {
   height: 100%;
   display: block;
 }
+
+/* Control panel */
+#controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 0;
+  border-top: 1px solid var(--stroke-color);
+  margin-top: 8px;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-group.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+#controls select,
+#controls input[type="range"] {
+  font-family: var(--font-family);
+  font-size: 14px;
+}
+
+#controls button {
+  min-width: 36px;
+  height: 36px;
+  cursor: pointer;
+  border: 2px solid var(--stroke-color);
+  background: var(--bg-color);
+  border-radius: 4px;
+  font-weight: bold;
+  font-family: var(--font-family);
+  font-size: 14px;
+}
+
+#controls button:hover {
+  background: #F5F5F5;
+}
+
+#controls label {
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+#instance-indicator {
+  font-family: var(--mono-font);
+  min-width: 60px;
+  text-align: center;
+}
+
+#speed-display {
+  font-family: var(--mono-font);
+  min-width: 36px;
+  text-align: center;
+}
