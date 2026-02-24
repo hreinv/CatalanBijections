@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-23)
 
 **Core value:** Presenter can pick any two Catalan structures and walk the class through an animated, step-by-step visual bijection transformation.
-**Current focus:** Phase 5 - Remaining Bijections (Complete)
+**Current focus:** Phase 6 - Dyck Bridge (In Progress)
 
 ## Current Position
 
-Phase: 5 of 8 (Remaining Bijections)
-Plan: 3 of 3 in current phase (PHASE COMPLETE)
-Status: Phase Complete
-Last activity: 2026-02-24 -- Completed 05-03 NCP-to-Triangulations Bijection (all 8 classical bijections done)
+Phase: 6 of 8 (Dyck Bridge)
+Plan: 1 of 2 in current phase
+Status: In Progress
+Last activity: 2026-02-24 -- Completed 06-01 Bridge module with bijection graph, BFS pathfinding, step composition, and router integration
 
-Progress: [████████░░] 80%
+Progress: [████████░░] 85%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
+- Total plans completed: 17
 - Average duration: 2.6min
-- Total execution time: 0.68 hours
+- Total execution time: 0.73 hours
 
 **By Phase:**
 
@@ -43,9 +43,10 @@ Progress: [████████░░] 80%
 | Phase 05 P01 | 3min | 2 tasks | 3 files |
 | Phase 05 P02 | 4min | 2 tasks | 3 files |
 | Phase 05 P03 | 3min | 2 tasks | 2 files |
+| Phase 06 P01 | 3min | 2 tasks | 2 files |
 
 **Recent Trend:**
-- Last 5 plans: 4min, 4min, 3min, 4min, 3min
+- Last 5 plans: 3min, 4min, 3min, 3min, 3min
 - Trend: stable
 
 *Updated after each plan completion*
@@ -102,6 +103,10 @@ Recent decisions affecting current work:
 - [Phase 05]: 05-02: Plane tree root drawn at default color with no binary tree counterpart (n+1 plane nodes vs n binary nodes)
 - [Phase 05]: 05-03: NCP elements colored individually by element index (not by block) to match per-triangle correspondence
 - [Phase 05]: 05-03: Block arcs colored by most recently processed element in the block for progressive visual coherence
+- [Phase 06]: 06-01: Classical-first BFS via adjacency list sort order (no weighted Dijkstra needed for 11-node graph)
+- [Phase 06]: 06-01: Bridge edges only for island structures (staircase-polygon, stack-sortable-perm) to dyck-path hub
+- [Phase 06]: 06-01: classicalGetSteps passed as callback to composeSteps to avoid circular imports between router and bridge
+- [Phase 06]: 06-01: Router return type changed from Array|null to {steps, path}|null -- Plan 02 updates main.js consumer
 
 ### Pending Todos
 
@@ -115,5 +120,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 05-03-PLAN.md (NCP-to-Triangulations Bijection) -- Phase 5 COMPLETE (all 8 classical bijections)
+Stopped at: Completed 06-01-PLAN.md (Bridge module with BFS pathfinding and router integration)
 Resume file: None
