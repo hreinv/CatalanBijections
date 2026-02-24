@@ -164,4 +164,4 @@ Phase 8 (gap closure) depends only on Phase 3 and can run any time after Phase 3
 | 5. Remaining Bijections | 0/3 | Not started | - |
 | 6. Dyck Bridge | 0/2 | Not started | - |
 | 7. Presentation Hardening | 0/1 | Not started | - |
-| 8. Verify & Fix Integration Debt | 0/1 | Not started | - |
+| 8. Verify & Fix Integration Debt | 1/2 | In progress | - |

@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-23)
 
 **Core value:** Presenter can pick any two Catalan structures and walk the class through an animated, step-by-step visual bijection transformation.
-**Current focus:** Phase 3 - First Bijections (Complete)
+**Current focus:** Phase 8 - Verify & Fix Integration Debt (In Progress)
 
 ## Current Position
 
-Phase: 3 of 7 (First Bijections)
-Plan: 3 of 3 in current phase
-Status: Phase Complete
-Last activity: 2026-02-24 -- Completed 03-03 Remaining Bijections
+Phase: 8 of 8 (Verify & Fix Integration Debt)
+Plan: 1 of 2 in current phase
+Status: In Progress
+Last activity: 2026-02-24 -- Completed 08-01 Verification Documents
 
-Progress: [██████░░░░] 64%
+Progress: [████████░░] 75%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
-- Average duration: 2.1min
-- Total execution time: 0.28 hours
+- Total plans completed: 9
+- Average duration: 2.5min
+- Total execution time: 0.38 hours
 
 **By Phase:**
 
@@ -35,10 +35,11 @@ Progress: [██████░░░░] 64%
 | Phase 03 P01 | 2min | 2 tasks | 5 files |
 | Phase 03 P02 | 2min | 2 tasks | 2 files |
 | Phase 03 P03 | 3min | 2 tasks | 3 files |
+| Phase 08 P01 | 6min | 2 tasks | 2 files |
 
 **Recent Trend:**
-- Last 5 plans: 2min, 2min, 2min, 2min, 3min
-- Trend: stable
+- Last 5 plans: 2min, 2min, 2min, 3min, 6min
+- Trend: stable (documentation plan expected longer)
 
 *Updated after each plan completion*
 
@@ -76,6 +77,8 @@ Recent decisions affecting current work:
 - [Phase 03]: 03-03: Tree layout computed locally in bijection modules to avoid modifying structure modules
 - [Phase 03]: 03-03: Pre-order traversal order for binary-triang ensures node indices match triangle reveal order
 - [Phase 03]: 03-03: Subtree range indicator bars in parens-binary show left/right content decomposition visually
+- [Phase 08]: 08-01: toDyck() satisfies STRC-12 via test harness verification even though never called at runtime
+- [Phase 08]: 08-01: Dead triangulation import and orphaned exports noted for Plan 08-02, not blocking verification
 
 ### Pending Todos
 
@@ -89,5 +92,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 03-03-PLAN.md (Remaining Bijections) -- Phase 3 Complete
+Stopped at: Completed 08-01-PLAN.md (Verification Documents)
 Resume file: None

@@ -143,4 +143,4 @@ Deferred to future release. Tracked but not in current roadmap.
 
 ---
 *Requirements defined: 2026-02-23*
-*Last updated: 2026-02-24 after 02-03 completion*
+*Last updated: 2026-02-24 after 08-01 verification (21 requirements now formally verified)*
