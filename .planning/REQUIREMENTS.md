@@ -9,10 +9,10 @@ Requirements for the presentation-ready release. Each maps to roadmap phases.
 
 ### Foundation
 
-- [ ] **FOUND-01**: App loads from index.html with zero dependencies (no npm, no build step)
+- [x] **FOUND-01**: App loads from index.html with zero dependencies (no npm, no build step)
 - [x] **FOUND-02**: Dyck word enumeration correctly generates all C(n) instances for n=1 to 4
-- [ ] **FOUND-03**: HiDPI canvas rendering with devicePixelRatio scaling for sharp projector display
-- [ ] **FOUND-04**: Clean minimal visual theme (white background, high-contrast colors, thick strokes)
+- [x] **FOUND-03**: HiDPI canvas rendering with devicePixelRatio scaling for sharp projector display
+- [x] **FOUND-04**: Clean minimal visual theme (white background, high-contrast colors, thick strokes)
 
 ### Structure Rendering
 
@@ -94,10 +94,10 @@ Deferred to future release. Tracked but not in current roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FOUND-01 | Phase 1 | Pending |
+| FOUND-01 | Phase 1 | Complete |
 | FOUND-02 | Phase 1 | Complete |
-| FOUND-03 | Phase 1 | Pending |
-| FOUND-04 | Phase 1 | Pending |
+| FOUND-03 | Phase 1 | Complete |
+| FOUND-04 | Phase 1 | Complete |
 | STRC-01 | Phase 2 | Pending |
 | STRC-02 | Phase 2 | Pending |
 | STRC-03 | Phase 4 | Pending |
