@@ -75,18 +75,20 @@ function decompose(word, startIdx, depth, steps) {
 // =============================================================================
 
 /**
- * Assign layout coordinates using in-order traversal for x, depth for y.
+ * Assign layout coordinates using centered parent layout.
+ * Root is at cx (horizontal center), children offset by ±gap which halves each level.
  * @param {Object|null} node
- * @param {number} depth
- * @param {{ value: number }} counter
+ * @param {number} cx - Horizontal center for this node
+ * @param {number} depth - Current tree depth
+ * @param {number} gap - Horizontal offset for children at this level
  */
-function layoutTree(node, depth, counter) {
+function layoutCentered(node, cx, depth, gap) {
   if (node === null) return;
-  layoutTree(node.left, depth + 1, counter);
-  node._layoutX = counter.value;
+  node._layoutX = cx;
   node._layoutY = depth;
-  counter.value++;
-  layoutTree(node.right, depth + 1, counter);
+  const childGap = gap / 2;
+  if (node.left !== null) layoutCentered(node.left, cx - gap, depth + 1, childGap);
+  if (node.right !== null) layoutCentered(node.right, cx + gap, depth + 1, childGap);
 }
 
 /**
@@ -133,10 +135,8 @@ export function getSteps(dyckWord, n, reversed = false) {
   const tree = binaryTree.fromDyck(dyckWord);
   const charCount = parenStr.length; // 2n
 
-  // Layout the tree once
-  const counter = { value: 0 };
-  layoutTree(tree, 0, counter);
-  const totalNodes = counter.value;
+  // Layout the tree once — centered: root at x=0, children branch left/right
+  layoutCentered(tree, 0, 0, 1.0);
   const maxDepth = getMaxDepth(tree);
 
   // Collect pre-order nodes for indexed coloring
@@ -183,7 +183,7 @@ export function getSteps(dyckWord, n, reversed = false) {
         drawParenthesesWithZones(ctx, parenStr, decompSteps, parenBox, theme, colors, i);
 
         // Draw tree with three visual zones
-        drawTreeWithZones(ctx, tree, nodes, totalNodes, maxDepth, decompSteps, treeBox, theme, colors, i, progress);
+        drawTreeWithZones(ctx, tree, nodes, maxDepth, decompSteps, treeBox, theme, colors, i, progress);
       },
     });
   }
@@ -200,7 +200,7 @@ export function getSteps(dyckWord, n, reversed = false) {
 
       // All parentheses colored, full tree colored
       drawParenthesesComplete(ctx, parenStr, decompSteps, parenBox, theme, colors);
-      drawTreeComplete(ctx, tree, nodes, totalNodes, maxDepth, treeBox, theme, colors);
+      drawTreeComplete(ctx, tree, nodes, maxDepth, treeBox, theme, colors);
     },
   });
 
@@ -372,13 +372,21 @@ function drawParenthesesComplete(ctx, parenStr, decompSteps, box, theme, colors)
 
 /**
  * Compute tree drawing parameters within a bounding box.
+ * Uses centered layout coordinates where root is at x=0.
  */
-function treeDrawParams(totalNodes, maxDepth, box, theme) {
+function treeDrawParams(nodes, maxDepth, box, theme) {
   const nodeRadius = theme.nodeRadius || 16;
   const pad = nodeRadius + 4;
-  const xScale = totalNodes > 1 ? (box.width - pad * 2) / (totalNodes - 1) : 0;
+
+  // Find X extent from centered layout coordinates
+  let extent = 0;
+  for (const n of nodes) {
+    extent = Math.max(extent, Math.abs(n._layoutX));
+  }
+
+  const xScale = extent > 0 ? (box.width / 2 - pad) / extent : 0;
   const yScale = maxDepth > 0 ? (box.height - pad * 2) / maxDepth : 0;
-  const originX = box.x + pad;
+  const originX = box.x + box.width / 2;
   const originY = box.y + pad;
   return { nodeRadius, pad, xScale, yScale, originX, originY };
 }
@@ -389,9 +397,9 @@ function treeDrawParams(totalNodes, maxDepth, box, theme) {
  * - Active node: full color, pulsing glow, fades in with progress
  * - Not yet processed: not drawn
  */
-function drawTreeWithZones(ctx, tree, nodes, totalNodes, maxDepth, decompSteps, box, theme, colors, activeIndex, progress) {
+function drawTreeWithZones(ctx, tree, nodes, maxDepth, decompSteps, box, theme, colors, activeIndex, progress) {
   if (tree === null) return;
-  const params = treeDrawParams(totalNodes, maxDepth, box, theme);
+  const params = treeDrawParams(nodes, maxDepth, box, theme);
   const pulse = 0.5 + 0.5 * Math.sin(Date.now() * 0.008 * Math.PI);
 
   // Draw edges for revealed nodes
@@ -473,9 +481,9 @@ function drawTreeWithZones(ctx, tree, nodes, totalNodes, maxDepth, decompSteps, 
 /**
  * Draw the complete tree with all nodes colored (completion step).
  */
-function drawTreeComplete(ctx, tree, nodes, totalNodes, maxDepth, box, theme, colors) {
+function drawTreeComplete(ctx, tree, nodes, maxDepth, box, theme, colors) {
   if (tree === null) return;
-  const params = treeDrawParams(totalNodes, maxDepth, box, theme);
+  const params = treeDrawParams(nodes, maxDepth, box, theme);
 
   // Draw all edges
   for (let j = 0; j < nodes.length; j++) {

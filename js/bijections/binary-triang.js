@@ -55,18 +55,20 @@ function collectPairs(node, lo, hi, depth, pairs) {
 }
 
 /**
- * Assign layout coordinates using in-order traversal for x, depth for y.
+ * Assign layout coordinates using centered parent layout.
+ * Root is at cx (horizontal center), children offset by ±gap which halves each level.
  * @param {Object|null} node
- * @param {number} depth
- * @param {{ value: number }} counter
+ * @param {number} cx - Horizontal center for this node
+ * @param {number} depth - Current tree depth
+ * @param {number} gap - Horizontal offset for children at this level
  */
-function layoutTree(node, depth, counter) {
+function layoutCentered(node, cx, depth, gap) {
   if (node === null) return;
-  layoutTree(node.left, depth + 1, counter);
-  node._layoutX = counter.value;
+  node._layoutX = cx;
   node._layoutY = depth;
-  counter.value++;
-  layoutTree(node.right, depth + 1, counter);
+  const childGap = gap / 2;
+  if (node.left !== null) layoutCentered(node.left, cx - gap, depth + 1, childGap);
+  if (node.right !== null) layoutCentered(node.right, cx + gap, depth + 1, childGap);
 }
 
 /**
@@ -111,10 +113,8 @@ function getMaxDepth(node) {
 export function getSteps(dyckWord, n, reversed = false) {
   const tree = binaryTree.fromDyck(dyckWord);
 
-  // Compute layout once
-  const counter = { value: 0 };
-  layoutTree(tree, 0, counter);
-  const totalNodes = counter.value; // should equal n
+  // Compute layout once — centered: root at x=0, children branch left/right
+  layoutCentered(tree, 0, 0, 1.0);
   const maxDepth = getMaxDepth(tree);
 
   // Collect pre-order nodes for indexed coloring
@@ -138,7 +138,7 @@ export function getSteps(dyckWord, n, reversed = false) {
       const polyBox = reversed ? sourceBox : targetBox;
 
       // Draw full binary tree at full opacity, default colors
-      drawTreeIntro(ctx, tree, nodes, totalNodes, maxDepth, treeBox, theme);
+      drawTreeIntro(ctx, tree, nodes, maxDepth, treeBox, theme);
 
       // Draw (n+2)-gon outline, no diagonals or fills
       drawPolygonOutline(ctx, n, polyBox, theme);
@@ -159,7 +159,7 @@ export function getSteps(dyckWord, n, reversed = false) {
         const polyBox = reversed ? sourceBox : targetBox;
 
         // Draw tree with three visual zones
-        drawTreeWithZones(ctx, tree, nodes, totalNodes, maxDepth, treeBox, theme, colors, i);
+        drawTreeWithZones(ctx, tree, nodes, maxDepth, treeBox, theme, colors, i);
 
         // Draw polygon outline then triangles with three visual zones
         drawPolygonOutline(ctx, n, polyBox, theme);
@@ -179,7 +179,7 @@ export function getSteps(dyckWord, n, reversed = false) {
       const polyBox = reversed ? sourceBox : targetBox;
 
       // All nodes colored, all triangles filled
-      drawTreeComplete(ctx, tree, nodes, totalNodes, maxDepth, treeBox, theme, colors);
+      drawTreeComplete(ctx, tree, nodes, maxDepth, treeBox, theme, colors);
       drawPolygonOutline(ctx, n, polyBox, theme);
       drawTrianglesComplete(ctx, pairs, n, polyBox, theme, colors);
     },
@@ -199,13 +199,21 @@ export function getSteps(dyckWord, n, reversed = false) {
 
 /**
  * Compute drawing parameters for the tree within a bounding box.
+ * Uses centered layout coordinates where root is at x=0.
  */
-function treeDrawParams(totalNodes, maxDepth, box, theme) {
+function treeDrawParams(nodes, maxDepth, box, theme) {
   const nodeRadius = theme.nodeRadius || 16;
   const pad = nodeRadius + 4;
-  const xScale = totalNodes > 1 ? (box.width - pad * 2) / (totalNodes - 1) : 0;
+
+  // Find X extent from centered layout coordinates
+  let extent = 0;
+  for (const n of nodes) {
+    extent = Math.max(extent, Math.abs(n._layoutX));
+  }
+
+  const xScale = extent > 0 ? (box.width / 2 - pad) / extent : 0;
   const yScale = maxDepth > 0 ? (box.height - pad * 2) / maxDepth : 0;
-  const originX = box.x + pad;
+  const originX = box.x + box.width / 2;
   const originY = box.y + pad;
   return { nodeRadius, pad, xScale, yScale, originX, originY };
 }
@@ -247,9 +255,9 @@ function drawEdges(ctx, node, params, theme) {
 /**
  * Draw the full tree at intro step: all nodes in default color, full opacity.
  */
-function drawTreeIntro(ctx, tree, nodes, totalNodes, maxDepth, box, theme) {
+function drawTreeIntro(ctx, tree, nodes, maxDepth, box, theme) {
   if (tree === null) return;
-  const params = treeDrawParams(totalNodes, maxDepth, box, theme);
+  const params = treeDrawParams(nodes, maxDepth, box, theme);
 
   // Draw edges
   drawEdges(ctx, tree, params, theme);
@@ -281,9 +289,9 @@ function drawTreeIntro(ctx, tree, nodes, totalNodes, maxDepth, box, theme) {
  * - Active (j === activeIndex): full opacity, correspondence color, pulsing glow
  * - Not yet processed (j > activeIndex): dimmed, default color
  */
-function drawTreeWithZones(ctx, tree, nodes, totalNodes, maxDepth, box, theme, colors, activeIndex) {
+function drawTreeWithZones(ctx, tree, nodes, maxDepth, box, theme, colors, activeIndex) {
   if (tree === null) return;
-  const params = treeDrawParams(totalNodes, maxDepth, box, theme);
+  const params = treeDrawParams(nodes, maxDepth, box, theme);
   const pulse = 0.5 + 0.5 * Math.sin(Date.now() * 0.008 * Math.PI);
 
   // Draw edges first (behind nodes)
@@ -363,9 +371,9 @@ function drawTreeWithZones(ctx, tree, nodes, totalNodes, maxDepth, box, theme, c
 /**
  * Draw the tree with all nodes at full opacity with correspondence colors (completion step).
  */
-function drawTreeComplete(ctx, tree, nodes, totalNodes, maxDepth, box, theme, colors) {
+function drawTreeComplete(ctx, tree, nodes, maxDepth, box, theme, colors) {
   if (tree === null) return;
-  const params = treeDrawParams(totalNodes, maxDepth, box, theme);
+  const params = treeDrawParams(nodes, maxDepth, box, theme);
 
   // Draw colored edges
   for (let j = 0; j < nodes.length; j++) {

@@ -64,20 +64,22 @@ function getMaxDepth(node) {
 }
 
 /**
- * Assign layout coordinates using in-order traversal for x, depth for y.
- * Sufficient for n<=4 (max 4 internal nodes).
+ * Assign layout coordinates using centered parent layout.
+ * Root is at cx (horizontal center), children offset by ±gap which halves each level.
+ * This keeps the root visually centered at the top of the drawing area.
  *
  * @param {TreeNode|null} node
- * @param {number} depth
- * @param {{ value: number }} counter - Shared in-order counter
+ * @param {number} cx - Horizontal center for this node
+ * @param {number} depth - Current tree depth
+ * @param {number} gap - Horizontal offset for children at this level
  */
-function layoutTree(node, depth, counter) {
+function layoutCentered(node, cx, depth, gap) {
   if (node === null) return;
-  layoutTree(node.left, depth + 1, counter);
-  node.layoutX = counter.value;
+  node.layoutX = cx;
   node.layoutY = depth;
-  counter.value++;
-  layoutTree(node.right, depth + 1, counter);
+  const childGap = gap / 2;
+  if (node.left !== null) layoutCentered(node.left, cx - gap, depth + 1, childGap);
+  if (node.right !== null) layoutCentered(node.right, cx + gap, depth + 1, childGap);
 }
 
 /**
@@ -138,28 +140,32 @@ export function draw(ctx, instance, opts) {
   const { x, y, width, height, theme, colors } = opts;
   const nodeRadius = theme.nodeRadius || 16;
 
-  // Layout pass
-  const counter = { value: 0 };
-  layoutTree(instance, 0, counter);
-  const totalNodes = counter.value;
+  // Layout pass — centered: root at x=0, children branch left/right
+  layoutCentered(instance, 0, 0, 1.0);
   const maxDepth = getMaxDepth(instance);
 
-  // Scale to bounding box with padding for node circles
+  // Collect nodes to find X extent
+  const allNodes = [];
+  preOrderNodes(instance, allNodes);
+  let extent = 0;
+  for (const n of allNodes) {
+    extent = Math.max(extent, Math.abs(n.layoutX));
+  }
+
+  // Scale to bounding box with root centered horizontally
   const pad = nodeRadius + 4;
-  const xScale = totalNodes > 1 ? (width - pad * 2) / (totalNodes - 1) : 0;
+  const xScale = extent > 0 ? (width / 2 - pad) / extent : 0;
   const yScale = maxDepth > 0 ? (height - pad * 2) / maxDepth : 0;
 
-  const originX = x + pad;
+  const originX = x + width / 2;
   const originY = y + pad;
 
   // Draw edges first (behind nodes)
   drawEdges(ctx, instance, originX, originY, xScale, yScale, nodeRadius, theme);
 
   // Draw nodes in pre-order with colors
-  const nodes = [];
-  preOrderNodes(instance, nodes);
-  for (let i = 0; i < nodes.length; i++) {
-    const node = nodes[i];
+  for (let i = 0; i < allNodes.length; i++) {
+    const node = allNodes[i];
     const nx = originX + node.layoutX * xScale;
     const ny = originY + node.layoutY * yScale;
 
@@ -208,17 +214,23 @@ export function drawProgressive(ctx, instance, opts) {
   const { x, y, width, height, theme, colors, activeIndex, progress } = opts;
   const nodeRadius = theme.nodeRadius || 16;
 
-  // Layout pass (same as draw())
-  const counter = { value: 0 };
-  layoutTree(instance, 0, counter);
-  const totalNodes = counter.value;
+  // Layout pass — centered (same as draw())
+  layoutCentered(instance, 0, 0, 1.0);
   const maxDepth = getMaxDepth(instance);
 
+  // Find X extent for scaling
+  const tempNodes = [];
+  preOrderNodes(instance, tempNodes);
+  let extent = 0;
+  for (const n of tempNodes) {
+    extent = Math.max(extent, Math.abs(n.layoutX));
+  }
+
   const pad = nodeRadius + 4;
-  const xScale = totalNodes > 1 ? (width - pad * 2) / (totalNodes - 1) : 0;
+  const xScale = extent > 0 ? (width / 2 - pad) / extent : 0;
   const yScale = maxDepth > 0 ? (height - pad * 2) / maxDepth : 0;
 
-  const originX = x + pad;
+  const originX = x + width / 2;
   const originY = y + pad;
 
   // Collect nodes in pre-order (same as draw())
