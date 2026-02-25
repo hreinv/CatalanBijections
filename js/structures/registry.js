@@ -10,12 +10,8 @@ import * as dyckPath from './dyck-path.js';
 import * as binaryTree from './binary-tree.js';
 import * as triangulation from './triangulation.js';
 import * as mountainRange from './mountain-range.js';
-import * as latticePath from './lattice-path.js';
 import * as ballotSequence from './ballot-sequence.js';
-import * as staircasePolygon from './staircase-polygon.js';
-import * as rootedPlaneTree from './rooted-plane-tree.js';
 import * as nonCrossingPartition from './non-crossing-partition.js';
-import * as stackSortablePerm from './stack-sortable-perm.js';
 
 /**
  * Registry of all Catalan structure modules.
@@ -30,10 +26,6 @@ export const structures = Object.freeze({
   'binary-tree':    { module: binaryTree,     label: 'Binary Trees' },
   'triangulation':  { module: triangulation,  label: 'Triangulations' },
   'mountain-range':   { module: mountainRange,   label: 'Mountain Ranges' },
-  'lattice-path':     { module: latticePath,     label: 'Lattice Paths' },
   'ballot-sequence':    { module: ballotSequence,    label: 'Ballot Sequences' },
-  'staircase-polygon':  { module: staircasePolygon,  label: 'Staircase Polygons' },
-  'rooted-plane-tree':  { module: rootedPlaneTree,   label: 'Rooted Plane Trees' },
   'non-crossing-partition': { module: nonCrossingPartition, label: 'Non-crossing Partitions' },
-  'stack-sortable-perm':    { module: stackSortablePerm,    label: 'Stack-sortable Permutations' },
 });

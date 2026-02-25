@@ -50,12 +50,8 @@
       const binaryTreeMod = await import('/js/structures/binary-tree.js');
       const triangulationMod = await import('/js/structures/triangulation.js');
       const mountainRangeMod = await import('/js/structures/mountain-range.js');
-      const latticePathMod = await import('/js/structures/lattice-path.js');
       const ballotSequenceMod = await import('/js/structures/ballot-sequence.js');
-      const staircasePolygonMod = await import('/js/structures/staircase-polygon.js');
-      const rootedPlaneTreeMod = await import('/js/structures/rooted-plane-tree.js');
       const nonCrossingPartitionMod = await import('/js/structures/non-crossing-partition.js');
-      const stackSortablePermMod = await import('/js/structures/stack-sortable-perm.js');
       const { structures } = await import('/js/structures/registry.js');
 
       const structureModules = [
@@ -64,12 +60,8 @@
         { key: 'binary-tree', name: 'Binary Trees', mod: binaryTreeMod },
         { key: 'triangulation', name: 'Triangulations', mod: triangulationMod },
         { key: 'mountain-range', name: 'Mountain Ranges', mod: mountainRangeMod },
-        { key: 'lattice-path', name: 'Lattice Paths', mod: latticePathMod },
         { key: 'ballot-sequence', name: 'Ballot Sequences', mod: ballotSequenceMod },
-        { key: 'staircase-polygon', name: 'Staircase Polygons', mod: staircasePolygonMod },
-        { key: 'rooted-plane-tree', name: 'Rooted Plane Trees', mod: rootedPlaneTreeMod },
         { key: 'non-crossing-partition', name: 'Non-crossing Partitions', mod: nonCrossingPartitionMod },
-        { key: 'stack-sortable-perm', name: 'Stack-sortable Permutations', mod: stackSortablePermMod },
       ];
 
       // --- Test 1: Module interface verification ---
@@ -108,16 +100,16 @@
         }
       }
 
-      // Expected: 11 structures x (1+2+5+14) = 11 x 22 = 242 round-trips
-      log(`Total round-trips: ${totalRoundTrips}/242`, totalRoundTrips === 242);
+      // Expected: 7 structures x (1+2+5+14) = 7 x 22 = 154 round-trips
+      log(`Total round-trips: ${totalRoundTrips}/154`, totalRoundTrips === 154);
 
       // --- Test 3: Registry verification ---
       log('--- Registry Checks ---', true);
 
       log('Registry is an object', typeof structures === 'object' && structures !== null);
-      log('Registry has 11 entries', Object.keys(structures).length === 11);
+      log('Registry has 7 entries', Object.keys(structures).length === 7);
 
-      const expectedKeys = ['parentheses', 'dyck-path', 'binary-tree', 'triangulation', 'mountain-range', 'lattice-path', 'ballot-sequence', 'staircase-polygon', 'rooted-plane-tree', 'non-crossing-partition', 'stack-sortable-perm'];
+      const expectedKeys = ['parentheses', 'dyck-path', 'binary-tree', 'triangulation', 'mountain-range', 'ballot-sequence', 'non-crossing-partition'];
       for (const key of expectedKeys) {
         const entry = structures[key];
         log(`Registry has key '${key}'`, entry !== undefined);

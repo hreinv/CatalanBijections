@@ -18,8 +18,6 @@ import * as binaryTriang from './binary-triang.js';
 import * as parensBinary from './parens-binary.js';
 import * as ballotDyck from './ballot-dyck.js';
 import * as dyckMountain from './dyck-mountain.js';
-import * as dyckLattice from './dyck-lattice.js';
-import * as binaryPlaneTree from './binary-plane-tree.js';
 import * as ncpTriang from './ncp-triang.js';
 import { directSteps } from './bridge.js';
 import { structures } from '../structures/registry.js';
@@ -55,8 +53,6 @@ register(binaryTriang);
 register(parensBinary);
 register(ballotDyck);
 register(dyckMountain);
-register(dyckLattice);
-register(binaryPlaneTree);
 register(ncpTriang);
 
 // =============================================================================

@@ -2,10 +2,10 @@
  * Dyck Bridge Module
  *
  * Provides bijection graph construction, BFS pathfinding, and step
- * composition for non-classical structure pairs. Every pair of the 11
+ * composition for non-classical structure pairs. Every pair of the 10
  * Catalan structures can be connected via this bridge -- classical pairs
- * use their direct edges while "island" structures (staircase-polygon,
- * stack-sortable-perm) route through the Dyck word hub.
+ * use their direct edges while "island" structures route through
+ * the Dyck word hub.
  *
  * Exports: findPath, directSteps
  */
@@ -17,7 +17,7 @@ import { structures } from '../structures/registry.js';
 // =============================================================================
 
 /**
- * 8 classical bijection edges (undirected).
+ * 6 classical bijection edges (undirected).
  * Each entry represents a direct bijection module in js/bijections/.
  */
 const CLASSICAL_EDGES = Object.freeze([
@@ -26,16 +26,14 @@ const CLASSICAL_EDGES = Object.freeze([
   { source: 'parentheses', target: 'binary-tree' },
   { source: 'ballot-sequence', target: 'dyck-path' },
   { source: 'dyck-path', target: 'mountain-range' },
-  { source: 'dyck-path', target: 'lattice-path' },
-  { source: 'binary-tree', target: 'rooted-plane-tree' },
   { source: 'non-crossing-partition', target: 'triangulation' },
 ]);
 
 /**
  * Build the bijection graph as a frozen adjacency list (Map).
  *
- * - 11 nodes (one per Catalan structure)
- * - 8 classical edges (bidirectional, type 'classical')
+ * - 7 nodes (one per Catalan structure)
+ * - 6 classical edges (bidirectional, type 'classical')
  * - Bridge edges for island structures with zero classical edges,
  *   connecting them to 'dyck-path' as a hub (type 'bridge')
  * - Each node's neighbor list is sorted: classical edges first

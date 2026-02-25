@@ -3,198 +3,217 @@
  *
  * Implements the uniform structure interface: fromDyck, toDyck, draw.
  *
- * A Dyck path is a lattice path from (0,0) to (2n,0) with steps
- * (+1,+1) for each +1 in the word and (+1,-1) for each -1.
- * The path never goes below the x-axis.
+ * A Dyck path is a lattice path from (0,0) to (n,n) using East and North
+ * steps that stays weakly below the diagonal y = x.
+ * +1 in the Dyck word maps to an East step (+1,0) and
+ * -1 maps to a North step (0,+1).
  *
- * Instance representation: { points: Array<{x, y}> }
+ * Instance representation: { n, steps: Array<'N'|'E'>, points: Array<{x, y}> }
  */
 
 /**
- * Convert a Dyck word to a sequence of (x, y) points for the lattice path.
- * Starting at (0, 0), +1 moves to (x+1, y+1), -1 moves to (x+1, y-1).
+ * Convert a Dyck word to a lattice path below the diagonal.
+ * +1 maps to E (East step, increment x), -1 maps to N (North step, increment y).
  *
  * @param {number[]} dyckWord - Array of +1/-1 values
- * @returns {{ points: Array<{x: number, y: number}> }}
+ * @returns {{ n: number, steps: Array<'E'|'N'>, points: Array<{x: number, y: number}> }}
  */
 export function fromDyck(dyckWord) {
+  const n = dyckWord.length / 2;
+  const steps = [];
   const points = [{ x: 0, y: 0 }];
   let cx = 0, cy = 0;
+
   for (const step of dyckWord) {
-    cx += 1;
-    cy += step; // +1 for up, -1 for down
+    if (step === 1) {
+      steps.push('E');
+      cx += 1;
+    } else {
+      steps.push('N');
+      cy += 1;
+    }
     points.push({ x: cx, y: cy });
   }
-  return { points };
+
+  return { n, steps, points };
 }
 
 /**
- * Reconstruct a Dyck word from a Dyck path instance.
- * Computes y-deltas between consecutive points.
+ * Convert a Dyck path instance back to a Dyck word.
+ * E maps to +1, N maps to -1.
  *
- * @param {{ points: Array<{x: number, y: number}> }} instance
+ * @param {{ n: number, steps: Array<'N'|'E'>, points: Array<{x: number, y: number}> }} instance
  * @returns {number[]} Dyck word as +1/-1 array
  */
 export function toDyck(instance) {
-  const { points } = instance;
-  const word = [];
-  for (let i = 1; i < points.length; i++) {
-    word.push(points[i].y - points[i - 1].y);
-  }
-  return word;
+  return instance.steps.map(s => s === 'E' ? 1 : -1);
 }
 
 /**
- * Draw the Dyck lattice path within the bounding box.
- * Draws grid lines, the x-axis, the path, and colored circles at vertices.
+ * Draw the Dyck path on an n × n grid within the bounding box.
+ * Grid lines, diagonal boundary (dashed), path segments with correspondence colors.
  *
  * @param {CanvasRenderingContext2D} ctx
- * @param {{ points: Array<{x: number, y: number}> }} instance
+ * @param {{ n: number, steps: Array<'N'|'E'>, points: Array<{x: number, y: number}> }} instance
  * @param {{ x: number, y: number, width: number, height: number, theme: Object, colors: string[] }} opts
  */
 export function draw(ctx, instance, opts) {
   const { x, y, width, height, theme, colors } = opts;
-  const { points } = instance;
+  const { n, steps, points } = instance;
 
-  if (points.length <= 1) return;
+  if (n === 0 || points.length <= 1) return;
 
-  const n = (points.length - 1) / 2; // Order
   const padding = 20;
   const drawWidth = width - padding * 2;
   const drawHeight = height - padding * 2;
 
-  // Scaling: x ranges 0..2n, y ranges 0..n
-  const scaleX = drawWidth / (2 * n);
-  const scaleY = drawHeight / n;
+  const cellSize = Math.min(drawWidth / n, drawHeight / n);
+  const gridWidth = cellSize * n;
+  const gridHeight = cellSize * n;
 
-  // Convert grid coords to canvas coords
-  // y=0 is at the bottom of the drawing area, y=n at top
-  function toCanvasX(gx) { return x + padding + gx * scaleX; }
-  function toCanvasY(gy) { return y + padding + (n - gy) * scaleY; }
+  const offsetX = x + padding + (drawWidth - gridWidth) / 2;
+  const offsetY = y + padding + (drawHeight - gridHeight) / 2;
+
+  function toCanvasX(gx) { return offsetX + gx * cellSize; }
+  function toCanvasY(gy) { return offsetY + (n - gy) * cellSize; }
 
   // Draw grid lines
   ctx.strokeStyle = theme.gridLine || '#E0E0E0';
   ctx.lineWidth = 1;
-  for (let gx = 0; gx <= 2 * n; gx++) {
+  for (let gx = 0; gx <= n; gx++) {
     ctx.beginPath();
-    ctx.moveTo(toCanvasX(gx), toCanvasY(n));
-    ctx.lineTo(toCanvasX(gx), toCanvasY(0));
+    ctx.moveTo(toCanvasX(gx), toCanvasY(0));
+    ctx.lineTo(toCanvasX(gx), toCanvasY(n));
     ctx.stroke();
   }
   for (let gy = 0; gy <= n; gy++) {
     ctx.beginPath();
     ctx.moveTo(toCanvasX(0), toCanvasY(gy));
-    ctx.lineTo(toCanvasX(2 * n), toCanvasY(gy));
+    ctx.lineTo(toCanvasX(n), toCanvasY(gy));
     ctx.stroke();
   }
 
-  // Emphasize x-axis (y=0 line)
-  ctx.strokeStyle = theme.gridLine || '#E0E0E0';
+  // Draw diagonal y = x as dashed line
+  ctx.save();
+  ctx.strokeStyle = theme.strokeColor || '#1A1A1A';
+  ctx.globalAlpha = 0.4;
   ctx.lineWidth = 2;
+  ctx.setLineDash([5, 5]);
   ctx.beginPath();
   ctx.moveTo(toCanvasX(0), toCanvasY(0));
-  ctx.lineTo(toCanvasX(2 * n), toCanvasY(0));
+  ctx.lineTo(toCanvasX(n), toCanvasY(n));
   ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
 
-  // Draw the path
-  ctx.strokeStyle = theme.strokeColor || '#1A1A1A';
+  // Draw each step segment with correspondence colors
   ctx.lineWidth = theme.strokeWidth || 3;
-  ctx.beginPath();
-  ctx.moveTo(toCanvasX(points[0].x), toCanvasY(points[0].y));
-  for (let i = 1; i < points.length; i++) {
-    ctx.lineTo(toCanvasX(points[i].x), toCanvasY(points[i].y));
+  for (let i = 0; i < steps.length; i++) {
+    const from = points[i];
+    const to = points[i + 1];
+    ctx.strokeStyle = colors[i % colors.length];
+    ctx.beginPath();
+    ctx.moveTo(toCanvasX(from.x), toCanvasY(from.y));
+    ctx.lineTo(toCanvasX(to.x), toCanvasY(to.y));
+    ctx.stroke();
   }
-  ctx.stroke();
 
-  // Draw colored circles at each point on the path
-  const circleRadius = Math.max(4, Math.min(scaleX, scaleY) * 0.2);
+  // Draw vertex dots
+  const dotRadius = Math.max(3, cellSize * 0.1);
   for (let i = 0; i < points.length; i++) {
     ctx.fillStyle = colors[i % colors.length];
     ctx.beginPath();
-    ctx.arc(toCanvasX(points[i].x), toCanvasY(points[i].y), circleRadius, 0, Math.PI * 2);
+    ctx.arc(toCanvasX(points[i].x), toCanvasY(points[i].y), dotRadius, 0, Math.PI * 2);
     ctx.fill();
   }
 }
 
 /**
- * Return the number of animatable elements (2n segments).
- * @param {{ points: Array<{x: number, y: number}> }} instance
+ * Return the number of animatable elements (2n steps).
+ * @param {{ n: number, steps: Array<'N'|'E'>, points: Array<{x: number, y: number}> }} instance
  * @returns {number}
  */
 export function elementCount(instance) {
-  return instance.points.length - 1;
+  return instance.steps.length;
 }
 
 /**
  * Draw the Dyck path with three-zone progressive coloring.
- * Grid is always visible. Segments are drawn only up to activeIndex.
+ * Grid and diagonal are always visible. Step segments are drawn only up to activeIndex.
  * The active segment animates from start to end using progress.
  *
  * @param {CanvasRenderingContext2D} ctx
- * @param {{ points: Array<{x: number, y: number}> }} instance
+ * @param {{ n: number, steps: Array<'N'|'E'>, points: Array<{x: number, y: number}> }} instance
  * @param {{ x: number, y: number, width: number, height: number, theme: Object, colors: string[], activeIndex: number, progress: number }} opts
  */
 export function drawProgressive(ctx, instance, opts) {
   const { x, y, width, height, theme, colors, activeIndex, progress } = opts;
-  const { points } = instance;
+  const { n, steps, points } = instance;
 
-  if (points.length <= 1) return;
+  if (n === 0 || points.length <= 1) return;
 
-  const n = (points.length - 1) / 2;
   const padding = 20;
   const drawWidth = width - padding * 2;
   const drawHeight = height - padding * 2;
 
-  const scaleX = drawWidth / (2 * n);
-  const scaleY = drawHeight / n;
+  const cellSize = Math.min(drawWidth / n, drawHeight / n);
+  const gridWidth = cellSize * n;
+  const gridHeight = cellSize * n;
 
-  function toCanvasX(gx) { return x + padding + gx * scaleX; }
-  function toCanvasY(gy) { return y + padding + (n - gy) * scaleY; }
+  const offsetX = x + padding + (drawWidth - gridWidth) / 2;
+  const offsetY = y + padding + (drawHeight - gridHeight) / 2;
+
+  function toCanvasX(gx) { return offsetX + gx * cellSize; }
+  function toCanvasY(gy) { return offsetY + (n - gy) * cellSize; }
 
   // --- Always draw grid ---
   ctx.strokeStyle = theme.gridLine || '#E0E0E0';
   ctx.lineWidth = 1;
-  for (let gx = 0; gx <= 2 * n; gx++) {
+  for (let gx = 0; gx <= n; gx++) {
     ctx.beginPath();
-    ctx.moveTo(toCanvasX(gx), toCanvasY(n));
-    ctx.lineTo(toCanvasX(gx), toCanvasY(0));
+    ctx.moveTo(toCanvasX(gx), toCanvasY(0));
+    ctx.lineTo(toCanvasX(gx), toCanvasY(n));
     ctx.stroke();
   }
   for (let gy = 0; gy <= n; gy++) {
     ctx.beginPath();
     ctx.moveTo(toCanvasX(0), toCanvasY(gy));
-    ctx.lineTo(toCanvasX(2 * n), toCanvasY(gy));
+    ctx.lineTo(toCanvasX(n), toCanvasY(gy));
     ctx.stroke();
   }
 
-  // Emphasize x-axis
-  ctx.strokeStyle = theme.gridLine || '#E0E0E0';
+  // --- Always draw diagonal ---
+  ctx.save();
+  ctx.strokeStyle = theme.strokeColor || '#1A1A1A';
+  ctx.globalAlpha = 0.4;
   ctx.lineWidth = 2;
+  ctx.setLineDash([5, 5]);
   ctx.beginPath();
   ctx.moveTo(toCanvasX(0), toCanvasY(0));
-  ctx.lineTo(toCanvasX(2 * n), toCanvasY(0));
+  ctx.lineTo(toCanvasX(n), toCanvasY(n));
   ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
 
-  // --- Draw segments with three-zone pattern ---
-  const segCount = points.length - 1;
+  // --- Draw step segments with three-zone pattern ---
+  const stepCount = steps.length;
   const strokeWidth = theme.strokeWidth || 3;
-  const circleRadius = Math.max(4, Math.min(scaleX, scaleY) * 0.15);
+  const dotRadius = Math.max(3, cellSize * 0.1);
   const pulse = 0.5 + 0.5 * Math.sin(Date.now() * 0.008 * Math.PI);
 
-  for (let i = 0; i < segCount; i++) {
-    if (i > activeIndex) break; // Unprocessed: not drawn
+  for (let i = 0; i < stepCount; i++) {
+    if (i > activeIndex) break;
 
-    const p0 = points[i];
-    const p1 = points[i + 1];
-    const x0 = toCanvasX(p0.x);
-    const y0 = toCanvasY(p0.y);
-    const x1 = toCanvasX(p1.x);
-    const y1 = toCanvasY(p1.y);
+    const from = points[i];
+    const to = points[i + 1];
+    const x0 = toCanvasX(from.x);
+    const y0 = toCanvasY(from.y);
+    const x1 = toCanvasX(to.x);
+    const y1 = toCanvasY(to.y);
 
     ctx.save();
 
     if (i < activeIndex) {
-      // Processed: full opacity, correspondence color, no glow
       ctx.globalAlpha = 1.0;
       ctx.strokeStyle = colors[i % colors.length];
       ctx.lineWidth = strokeWidth;
@@ -203,13 +222,11 @@ export function drawProgressive(ctx, instance, opts) {
       ctx.lineTo(x1, y1);
       ctx.stroke();
 
-      // Vertex circle at segment start
       ctx.fillStyle = colors[i % colors.length];
       ctx.beginPath();
-      ctx.arc(x0, y0, circleRadius, 0, Math.PI * 2);
+      ctx.arc(x0, y0, dotRadius, 0, Math.PI * 2);
       ctx.fill();
     } else if (i === activeIndex) {
-      // Active: animate from start to end using progress, with glow
       const color = colors[i % colors.length];
       const endX = x0 + (x1 - x0) * progress;
       const endY = y0 + (y1 - y0) * progress;
@@ -224,20 +241,18 @@ export function drawProgressive(ctx, instance, opts) {
       ctx.lineTo(endX, endY);
       ctx.stroke();
 
-      // Vertex circle at segment start (no glow)
       ctx.shadowBlur = 0;
       ctx.shadowColor = 'transparent';
       ctx.fillStyle = color;
       ctx.beginPath();
-      ctx.arc(x0, y0, circleRadius, 0, Math.PI * 2);
+      ctx.arc(x0, y0, dotRadius, 0, Math.PI * 2);
       ctx.fill();
 
-      // Vertex circle at animated end
       if (progress > 0.1) {
         ctx.shadowColor = color;
         ctx.shadowBlur = 4 + pulse * 8;
         ctx.beginPath();
-        ctx.arc(endX, endY, circleRadius, 0, Math.PI * 2);
+        ctx.arc(endX, endY, dotRadius, 0, Math.PI * 2);
         ctx.fill();
       }
     }
@@ -251,7 +266,7 @@ export function drawProgressive(ctx, instance, opts) {
     ctx.globalAlpha = 1.0;
     ctx.fillStyle = colors[0 % colors.length];
     ctx.beginPath();
-    ctx.arc(toCanvasX(0), toCanvasY(0), circleRadius, 0, Math.PI * 2);
+    ctx.arc(toCanvasX(0), toCanvasY(0), dotRadius, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
   }
